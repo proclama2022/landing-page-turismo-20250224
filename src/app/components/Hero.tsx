@@ -63,7 +63,7 @@ export default function Hero() {
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-yellow-400 rounded-full opacity-70 animate-pulse"></div>
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-blue-500 rounded-full opacity-60 animate-pulse"></div>
               <div className="relative bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-2xl">
-                <h3 className="text-2xl font-bold text-white mb-4 text-shadow-md">Vantaggi del Bando</h3>
+                <h3 className="text-2xl font-bold text-white mb-4 text-shadow-md">Caratteristiche del Bando</h3>
                 <ul className="space-y-3 text-white">
                   <motion.li 
                     initial={{ opacity: 0, x: -20 }}
@@ -87,7 +87,7 @@ export default function Hero() {
                     transition={{ delay: 1 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Supporto per digitalizzazione e sostenibilità</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Investimenti in sostenibilità ambientale</span>
                   </motion.li>
                   <motion.li 
                     initial={{ opacity: 0, x: -20 }}
@@ -95,7 +95,7 @@ export default function Hero() {
                     transition={{ delay: 1.2 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">DDG n. 4613/S11 del 19/12/2024</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Premialità per immobili di interesse storico</span>
                   </motion.li>
                 </ul>
               </div>

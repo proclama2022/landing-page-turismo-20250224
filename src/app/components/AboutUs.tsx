@@ -134,8 +134,31 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, bgC
 
 export default function AboutUs() {
   return (
-    <section id="about" className="py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <section id="about" className="py-20 bg-gradient-to-b from-white to-gray-100">
       <div className="container mx-auto px-4">
+        <AnimateWhenVisible>
+          <motion.div 
+            className="flex justify-center mb-12"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 100, 
+              duration: 0.8,
+              delay: 0.2
+            }}
+          >
+            <Image
+              src="/logo.png"
+              alt="Management Advisor Logo"
+              width={280}
+              height={280}
+              className="rounded-lg shadow-2xl hover:shadow-blue-300/50 transition-all duration-500 hover:scale-105"
+              style={{ filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.5))' }}
+            />
+          </motion.div>
+        </AnimateWhenVisible>
+
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
