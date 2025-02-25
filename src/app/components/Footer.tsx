@@ -10,7 +10,16 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <h3 className="text-xl font-bold mb-4">Management Advisor</h3>
+            <div className="mb-4">
+              <Image 
+                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
+                alt="MAD - Management Advisor" 
+                width={150} 
+                height={150}
+                className="object-contain h-20 w-auto"
+              />
+            </div>
+            <h3 className="text-xl font-bold mb-4">MAD - Management Advisor</h3>
             <p className="text-gray-400 mb-4">
               Il partner ideale per accedere ai finanziamenti del Bando Turismo Sicilia 2025.
             </p>
@@ -83,7 +92,7 @@ export default function Footer() {
                 <svg className="w-5 h-5 mr-2 mt-0.5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="text-gray-400">info@managementadvisor.it</span>
+                <span className="text-gray-400">info@mad-advisor.it</span>
               </li>
               <li className="flex items-start">
                 <svg className="w-5 h-5 mr-2 mt-0.5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -105,7 +114,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-gray-800 pt-8 mt-8 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} Management Advisor. Tutti i diritti riservati.</p>
+          <p>© {new Date().getFullYear()} MAD - Management Advisor. Tutti i diritti riservati.</p>
           <div className="mt-2 space-x-4">
             <Link href="/privacy" className="hover:text-yellow-400 transition-colors duration-300">
               Privacy Policy

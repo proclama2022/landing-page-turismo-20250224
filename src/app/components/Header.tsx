@@ -1,30 +1,70 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
+import { Menu, X } from 'lucide-react';
 
-const Header = () => {
+export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="w-full bg-white shadow-md fixed top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="relative w-40 h-12">
-            {/* Placeholder temporaneo per il logo */}
-            <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded">
-              <span className="text-gray-500 text-sm font-medium">Logo</span>
+    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 py-2 shadow-lg' : 'bg-transparent py-4'}`}>
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="mr-4">
+              <Image 
+                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
+                alt="MAD - Management Advisor" 
+                width={50} 
+                height={50}
+                className="object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">Bando Turismo 2025</h1>
+              <p className="text-sm text-gray-300">Finanziamenti per le imprese turistiche</p>
             </div>
           </div>
+          
+          <div className="hidden md:flex space-x-6">
+            <Link href="#about" className="text-white hover:text-yellow-400 transition-colors duration-300">Chi Siamo</Link>
+            <Link href="#eligibility" className="text-white hover:text-yellow-400 transition-colors duration-300">Requisiti</Link>
+            <Link href="#bandoareas" className="text-white hover:text-yellow-400 transition-colors duration-300">Aree Finanziabili</Link>
+            <Link href="#faq" className="text-white hover:text-yellow-400 transition-colors duration-300">FAQ</Link>
+            <Link href="#form" className="text-white hover:text-yellow-400 transition-colors duration-300 bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600">Verifica Ammissibilità</Link>
+          </div>
+          
+          <div className="md:hidden">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white p-2">
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-        <div className="text-center flex-1 px-4">
-          <h1 className="text-2xl font-bold text-foreground">Bando Turismo 2024</h1>
-          <p className="text-foreground mt-1">Scopri se la tua attività è idonea al finanziamento</p>
-        </div>
-        <div className="w-40">
-          {/* Spazio riservato per eventuali elementi aggiuntivi */}
-        </div>
+        
+        {isMenuOpen && (
+          <div className="md:hidden mt-4 bg-gray-800 rounded-lg p-4">
+            <div className="flex flex-col space-y-3">
+              <Link href="#about" className="text-white hover:text-yellow-400 transition-colors duration-300 py-2">Chi Siamo</Link>
+              <Link href="#eligibility" className="text-white hover:text-yellow-400 transition-colors duration-300 py-2">Requisiti</Link>
+              <Link href="#bandoareas" className="text-white hover:text-yellow-400 transition-colors duration-300 py-2">Aree Finanziabili</Link>
+              <Link href="#faq" className="text-white hover:text-yellow-400 transition-colors duration-300 py-2">FAQ</Link>
+              <Link href="#form" className="text-white bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600 transition-colors duration-300 text-center">Verifica Ammissibilità</Link>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
-};
-
-export default Header;
+}
