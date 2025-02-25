@@ -7,7 +7,7 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    appDir: true,
+    // appDir è ora abilitato di default
   },
 };
 
