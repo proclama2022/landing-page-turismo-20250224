@@ -1,4 +1,4 @@
-import { DocumentFields, FormState, RegimeType } from '../types/form';
+import { DocumentFields, FormState, RegimeType } from '@/types/form';
 
 interface DocumentValidation {
   id: DocumentFields;

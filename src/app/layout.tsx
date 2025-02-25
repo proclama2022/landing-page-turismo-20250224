@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import './globals.css';
 import Footer from './components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+// const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Bando Turismo Sicilia 2024',
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it" className="h-full">
-      <body className={`${inter.className} h-full antialiased`}>
+      <body className={`h-full antialiased`}>
         {children}
         <Footer />
       </body>

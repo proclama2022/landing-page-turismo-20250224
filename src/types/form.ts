@@ -20,48 +20,66 @@ export const ATECO_CODES = [
 
 export type Role = 'imprenditore' | 'collaboratore' | 'altro';
 
+export interface Contact {
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  role: Role[];
+}
+
+export interface Eligibility {
+  isRegistered: boolean;
+  hasClassificationRequirements: boolean;
+  hadGrantRevocation: boolean;
+  hasRelocated24Months: boolean;
+  willNotRelocate24Months: boolean;
+  isPartOfGroup: boolean;
+}
+
+export interface LocalUnit {
+  municipality: string;
+  province: string;
+  address: string;
+  postalCode: string;
+}
+
+export interface Requirements {
+  businessRegistry: boolean;
+  sicilianLocation: boolean;
+  buildingCompliance: boolean;
+  financialCapacity: boolean;
+  contributionRegularity: boolean;
+}
+
 export type CompanySize = 'micro' | 'piccola' | 'media' | 'grande';
 
-export type ProjectType = 
-  | 'expansion'
-  | 'newConstruction'
-  | 'completion';
+export type ProjectType = 'expansion' | 'newConstruction' | 'completion';
 
 export type RegimeType = 'normal' | 'deMinimis' | 'exemption';
 
-export type InvestmentType = 
-  | 'ampliamento'
-  | 'nuova_struttura'
-  | 'recupero_immobile';
+export type InvestmentType = 'ampliamento' | 'nuova_struttura' | 'recupero_immobile';
 
-export type InvestmentPurpose = 
-  | 'enhanceTourism'      // Potenziamento dell'offerta turistica
-  | 'qualityStandards'    // Innalzamento degli standard qualitativi
-  | 'serviceImprovement'  // Ampliamento e miglioramento dei servizi
-  | 'reuseProperty';      // Riutilizzo produttivo di beni immobili
+export type InvestmentPurpose = 'enhanceTourism' | 'qualityStandards' | 'serviceImprovement' | 'reuseProperty';
 
 export type ExpenseType = 
-  | 'propertyPurchase'        // acquisto di suolo aziendale, fabbricati
-  | 'construction'            // demolizioni e ricostruzioni
-  | 'projectManagement'       // oneri di progettazione
-  | 'equipment'              // nuovi macchinari, impianti, arredi
-  | 'consulting'             // consulenze specialistiche
-  | 'feasibilityStudy'       // studi di fattibilità
-  | 'environmentalCert'      // certificazioni ambientali
-  | 'energyCert'            // attestati prestazione energetica
-  | 'intellectualProperty'   // brevetti, licenze
-  | 'rainwaterSystem'       // impianti recupero acque
-  | 'ledLighting'           // relamping LED
-  | 'homeAutomation'        // gestione domotica
-  | 'solarThermal'          // solare termico
-  | 'photovoltaic'          // impianti fotovoltaici
-  | 'thermalEfficiency';    // miglioramento prestazioni termiche
+  | 'propertyPurchase' 
+  | 'construction' 
+  | 'projectManagement' 
+  | 'equipment' 
+  | 'consulting' 
+  | 'feasibilityStudy' 
+  | 'environmentalCert' 
+  | 'energyCert' 
+  | 'intellectualProperty' 
+  | 'rainwaterSystem' 
+  | 'ledLighting' 
+  | 'homeAutomation' 
+  | 'solarThermal' 
+  | 'photovoltaic' 
+  | 'thermalEfficiency';
 
-export type InvestmentAmount = 
-  | '100k'
-  | '400k'
-  | '1m'
-  | 'over_1m';
+export type InvestmentAmount = 'under100k' | '100k-500k' | '500k-1M' | 'over1M';
 
 export type AtecoCode = 
   | '55'
@@ -86,63 +104,76 @@ export type AtecoCode =
 export type DocumentFields = 'businessPlan' | 'technicalDocuments' | 'permits' | 'financialStatements';
 
 export interface FormState {
-  // Step 1: Dati di contatto
-  contact: {
-    email: string;
-    name: string;
-    surname: string;
-    phone: string;
-    role: Role[];
-  };
-
-  // Step 2: Requisiti di ammissibilità
-  eligibility: {
-    isRegistered: boolean;
-    hasClassificationRequirements: boolean;
-    hadGrantRevocation: boolean;
-    hasRelocated24Months: boolean;
-    willNotRelocate24Months: boolean;
-    isPartOfGroup: boolean;
-  };
-
-  // Step 3: Anagrafica aziendale
+  // Informazioni personali
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   companyName: string;
+  address: string;
+  city: string;
+  province: string;
+  zipCode: string;
+  
+  // Informazioni aziendali
   vatNumber: string;
   constitutionDate?: string;
   registrationDate?: string;
-  atecoCode: string;
-  companySize: CompanySize;
-
-  // Step 4: Unità locale
-  localUnit: {
-    municipality: string;
-    province: string;
-    address: string;
-    postalCode: string;
-  };
-
-  // Step 5: Dettagli investimento
-  project: {
-    description: string;
-    investmentType: InvestmentType;
-    purposes: string[];
-    expenses: string[];
-    willHireStaff: boolean;
-    involvesDegradedProperty: boolean;
-    isHistoricalProperty: boolean;
-    investmentAmount: InvestmentAmount;
-  };
-
-  // Step 6: Altro
+  atecoCode?: AtecoCode;
+  companySize?: CompanySize;
+  
+  // Informazioni di contatto
+  contact?: Contact;
+  
+  // Requisiti di ammissibilità
+  eligibility?: Eligibility;
+  
+  // Unità locale
+  localUnit?: LocalUnit;
+  
+  // Requisiti
+  requirements: Requirements;
+  
+  // Informazioni sul progetto
+  investmentType?: InvestmentType;
+  investmentPurpose?: InvestmentPurpose;
+  expenseTypes: ExpenseType[];
+  investmentAmount?: InvestmentAmount;
+  projectDescription: string;
+  projectType?: ProjectType;
+  projectLocation?: string;
+  projectDuration?: string;
+  
+  // Budget
+  expenses: Record<string, number>;
+  totalAmount: number;
+  fundingAmount: number;
+  regimeType: RegimeType;
+  
+  // Documenti
+  documents: Record<DocumentFields, boolean>;
+  
+  // Informazioni aggiuntive
   discoveryChannel: string;
   gdprConsent: boolean;
+  marketingConsent: boolean;
 }
 
 export const DEFAULT_FORM_STATE: FormState = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  companyName: '',
+  address: '',
+  city: '',
+  province: '',
+  zipCode: '',
+  vatNumber: '',
   contact: {
-    email: '',
     name: '',
     surname: '',
+    email: '',
     phone: '',
     role: []
   },
@@ -154,26 +185,38 @@ export const DEFAULT_FORM_STATE: FormState = {
     willNotRelocate24Months: false,
     isPartOfGroup: false
   },
-  companyName: '',
-  vatNumber: '',
-  atecoCode: '',
-  companySize: 'micro',
   localUnit: {
     municipality: '',
     province: '',
     address: '',
     postalCode: ''
   },
-  project: {
-    description: '',
-    investmentType: 'ampliamento',
-    purposes: [],
-    expenses: [],
-    willHireStaff: false,
-    involvesDegradedProperty: false,
-    isHistoricalProperty: false,
-    investmentAmount: '100k'
+  requirements: {
+    businessRegistry: false,
+    sicilianLocation: false,
+    buildingCompliance: false,
+    financialCapacity: false,
+    contributionRegularity: false
+  },
+  investmentType: 'ampliamento',
+  investmentPurpose: 'enhanceTourism',
+  expenseTypes: [],
+  investmentAmount: 'under100k',
+  projectDescription: '',
+  projectType: 'expansion',
+  projectLocation: '',
+  projectDuration: '',
+  expenses: {},
+  totalAmount: 0,
+  fundingAmount: 0,
+  regimeType: 'normal',
+  documents: {
+    businessPlan: false,
+    technicalDocuments: false,
+    permits: false,
+    financialStatements: false
   },
   discoveryChannel: '',
-  gdprConsent: false
+  gdprConsent: false,
+  marketingConsent: false
 };

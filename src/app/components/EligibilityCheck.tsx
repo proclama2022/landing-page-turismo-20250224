@@ -70,8 +70,12 @@ export function EligibilityCheck({ isOpen, onClose, onEligible }: EligibilityChe
       setCurrentStep(prev => prev + 1);
     } else {
       // Se arriviamo qui, l'utente ha risposto correttamente a tutte le domande
+      console.log('All eligibility questions answered correctly, calling onEligible');
       onEligible();
-      onClose();
+      // Delay closing the eligibility check to ensure the form drawer has time to open
+      setTimeout(() => {
+        onClose();
+      }, 100);
     }
   };
 
@@ -132,4 +136,4 @@ export function EligibilityCheck({ isOpen, onClose, onEligible }: EligibilityChe
       </div>
     </Modal>
   );
-} 
+}
