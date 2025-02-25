@@ -47,27 +47,27 @@ export default function FAQ() {
   const faqs = [
     {
       question: "Chi può partecipare al Bando Turismo Sicilia 2025?",
-      answer: "Possono partecipare al bando le micro, piccole e medie imprese turistiche con sede o unità operative in Sicilia, incluse strutture ricettive, attività di ristorazione legate al turismo, servizi turistici e operatori del settore."
+      answer: "Possono partecipare imprese di qualsiasi dimensione con sede legale o operativa in Sicilia, che abbiano o attivino codici ATECO prevalenti nel settore alberghiero ed extra-alberghiero (55.10.00 - Alberghi, 55.20.10 - Villaggi turistici, 55.20.20 - Ostelli della gioventù, 55.20.30 - Rifugi di montagna, 55.20.51 - Affittacamere, case vacanze, B&B, residence)."
     },
     {
       question: "Qual è l'importo massimo finanziabile?",
-      answer: "Il bando prevede un finanziamento a fondo perduto fino all'80% delle spese ammissibili, con un importo massimo di 500.000 euro per progetto, a seconda della tipologia di intervento e delle caratteristiche dell'impresa richiedente."
+      answer: "Il bando prevede due regimi di aiuto: 1) In regime 'De minimis' contributi da 50.000€ a 300.000€ con intensità massima dell'80% della spesa ammissibile; 2) In regime di 'Esenzione' contributi da 300.000,01€ a 3.500.000€ con intensità fino al 60% per micro e piccole imprese, 50% per medie imprese e 40% per grandi imprese."
     },
     {
       question: "Quali spese sono ammissibili al finanziamento?",
-      answer: "Sono ammissibili le spese per ristrutturazione e ammodernamento delle strutture, acquisto di attrezzature, digitalizzazione, interventi per la sostenibilità ambientale, formazione del personale e consulenze strategiche legate al progetto presentato."
+      answer: "Sono ammissibili: consulenze specialistiche (max 2%), oneri di progettazione (max 4%), acquisto di suolo/immobili/strutture e lavori di ristrutturazione (max 70% dell'investimento, di cui max 30% per acquisti), programmi informatici (max 20%), acquisto di macchinari, impianti, arredi e attrezzature nuove di fabbrica."
     },
     {
-      question: "Entro quando è possibile presentare la domanda?",
-      answer: "Le domande possono essere presentate a partire dal 1° febbraio 2025 fino al 30 aprile 2025, salvo esaurimento fondi. È consigliabile procedere il prima possibile alla preparazione della documentazione necessaria."
+      question: "Quali sono i programmi di spesa agevolabili?",
+      answer: "Sono agevolabili: 1) Ampliamento, ammodernamento e ristrutturazione di strutture esistenti; 2) Realizzazione di nuove strutture o attività con cambio di destinazione d'uso di immobili esistenti; 3) Recupero fisico e/o funzionale di immobili o strutture turistiche legittimamente iniziate e non ultimate."
     },
     {
-      question: "Come si presenta la domanda di finanziamento?",
-      answer: "La domanda va presentata esclusivamente attraverso la piattaforma telematica regionale, previa registrazione e autenticazione. È necessario allegare un progetto dettagliato, preventivi di spesa e tutta la documentazione richiesta dal bando."
+      question: "Come avviene l'erogazione del contributo?",
+      answer: "L'erogazione avviene su richiesta del beneficiario in base allo stato di avanzamento lavori (SAL), per importi non inferiori al 20% della somma totale. È possibile richiedere un'anticipazione fino al 30% dell'agevolazione, previa presentazione di polizza fideiussoria. Il saldo finale non può essere inferiore al 10% della somma totale ammessa."
     },
     {
-      question: "Quanto tempo occorre per ricevere l'esito della domanda?",
-      answer: "I tempi di valutazione delle domande sono stimati in circa 60-90 giorni dalla chiusura del bando. La graduatoria provvisoria verrà pubblicata sul sito istituzionale della Regione Siciliana."
+      question: "Qual è la durata massima del piano di investimento?",
+      answer: "Il piano di investimento deve avere una durata massima di 24 mesi dalla data di notifica del provvedimento di concessione, con possibilità di richiedere una proroga di massimo 6 mesi. L'investimento dovrà essere concluso, proroga compresa, entro e non oltre il 31 dicembre 2028."
     }
   ];
 
@@ -79,7 +79,7 @@ export default function FAQ() {
             Domande Frequenti sul Bando
           </h2>
           <p className="text-gray-600 max-w-3xl mx-auto">
-            Trova le risposte alle domande più frequenti sul Bando Turismo Sicilia 2025
+            Trova le risposte alle domande più frequenti sul Bando Turismo Sicilia 2025 (DDG n. 4613/S11 del 19/12/2024)
           </p>
         </div>
 

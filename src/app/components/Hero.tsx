@@ -41,7 +41,7 @@ export default function Hero() {
               Bando Turismo Sicilia 2025
             </h1>
             <p className="text-xl text-white mb-8 max-w-2xl text-hero-subtitle">
-              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> per strutture ricettive e imprese turistiche siciliane. Scopri se la tua azienda può accedere ai fondi.
+              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Fondo da 135 milioni di euro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <AnimatedButton 
@@ -71,7 +71,7 @@ export default function Hero() {
                     transition={{ delay: 0.6 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Contributi a fondo perduto fino all'80%</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Contributi a fondo perduto fino all'80% (De minimis)</span>
                   </motion.li>
                   <motion.li 
                     initial={{ opacity: 0, x: -20 }}
@@ -79,7 +79,7 @@ export default function Hero() {
                     transition={{ delay: 0.8 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Finanziamenti da 50.000€ a 500.000€</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Finanziamenti da 50.000€ a 3.500.000€</span>
                   </motion.li>
                   <motion.li 
                     initial={{ opacity: 0, x: -20 }}
@@ -95,7 +95,7 @@ export default function Hero() {
                     transition={{ delay: 1.2 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Consulenza gratuita per la presentazione</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">DDG n. 4613/S11 del 19/12/2024</span>
                   </motion.li>
                 </ul>
               </div>
