@@ -19,7 +19,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 py-2 shadow-lg' : 'bg-transparent py-4'}`}>
+    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 py-2 shadow-lg' : 'bg-gray-900/70 py-4'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -29,7 +29,7 @@ export default function Header() {
                 alt="MAD - Management Advisor" 
                 width={50} 
                 height={50}
-                className="object-contain"
+                className="object-contain drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
               />
             </div>
             <div>
