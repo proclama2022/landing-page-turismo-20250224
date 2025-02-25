@@ -41,7 +41,7 @@ export default function Hero() {
               Bando Turismo Sicilia 2025
             </h1>
             <p className="text-xl text-white mb-8 max-w-2xl text-hero-subtitle">
-              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Fondo da 135 milioni di euro.
+              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Fondo da 75 milioni di euro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <AnimatedButton 
@@ -95,7 +95,7 @@ export default function Hero() {
                     transition={{ delay: 1.2 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Premialità per immobili di interesse storico</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Apertura bando prevista per il 2025</span>
                   </motion.li>
                 </ul>
               </div>
