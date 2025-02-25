@@ -8,6 +8,15 @@ export default function AboutUs() {
     <section id="about" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <Image 
+              src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
+              alt="MAD - Management Advisor" 
+              width={120} 
+              height={120}
+              className="object-contain drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
+            />
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Management Advisor</h2>
           <p className="text-gray-600 max-w-3xl mx-auto">
             Il partner ideale per accedere ai finanziamenti del Bando Turismo Sicilia 2025

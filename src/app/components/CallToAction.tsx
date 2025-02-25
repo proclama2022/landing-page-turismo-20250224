@@ -6,6 +6,7 @@ import AnimatedSection from './ui/AnimatedSection';
 import AnimatedButton from './ui/AnimatedButton';
 import { motion } from 'framer-motion';
 import FormModal from './form/FormModal';
+import Image from 'next/image';
 
 export default function CallToAction() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +46,16 @@ export default function CallToAction() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <AnimatedSection direction="left">
             <div className="text-left">
+              <div className="flex items-center mb-6">
+                <Image 
+                  src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
+                  alt="MAD - Management Advisor" 
+                  width={80} 
+                  height={80}
+                  className="object-contain drop-shadow-[0_0_8px_rgba(255,215,0,0.5)] mr-4"
+                />
+                <h3 className="text-2xl font-semibold text-yellow-400">Management Advisor</h3>
+              </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white text-hero-title">
                 Non perdere l'opportunità del Bando Turismo Sicilia 2025
               </h2>
