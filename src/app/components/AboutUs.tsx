@@ -27,15 +27,19 @@ export default function AboutUs() {
           <div className="order-2 lg:order-1">
             <h3 className="text-2xl font-semibold text-black mb-4">Perché sceglierci</h3>
             <p className="text-gray-600 mb-6">
-              Management Advisor è specializzata nell'assistere le imprese turistiche siciliane nell'accesso ai fondi del Bando Turismo 2025. 
-              Siamo problem solver, coach e advisor per le imprese, aiutandole a massimizzare le opportunità di finanziamento.
+              Management Advisor è specializzata in finanza agevolata e nell'accesso ai fondi regionali, nazionali ed europei. È specializzata nell'assistere le imprese turistiche siciliane nell'accesso ai fondi del Bando Turismo 2025. Siamo problem solver, coach e advisor per le imprese, aiutandole a massimizzare le opportunità di finanziamento.
             </p>
             
             <h3 className="text-2xl font-semibold text-black mb-4">Esperienza nel settore turistico</h3>
             <p className="text-gray-600 mb-6">
-              Con una profonda conoscenza del settore turistico siciliano, offriamo consulenza specializzata per strutture ricettive, 
-              tour operator e imprese del comparto che desiderano accedere ai finanziamenti del Bando Turismo Sicilia 2025.
+              Con una profonda conoscenza del settore turistico siciliano, offriamo consulenza specializzata per strutture ricettive, tour operator e imprese del comparto che desiderano accedere ai finanziamenti del Bando Turismo Sicilia 2025.
             </p>
+            
+            <h3 className="text-2xl font-semibold text-black mb-4">I nostri servizi</h3>
+            <ul className="text-gray-600 mb-6 list-disc pl-5 space-y-2">
+              <li><strong>Valutazione di ammissibilità</strong>: Analizziamo la tua azienda per verificare l'idoneità alla partecipazione al bando.</li>
+              <li><strong>Predisposizione documentazione</strong>: Gestiamo tutta la documentazione necessaria per presentare la domanda di finanziamento.</li>
+            </ul>
             
             <div className="grid grid-cols-2 gap-4 mt-8">
               <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
