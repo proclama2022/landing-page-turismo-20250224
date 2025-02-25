@@ -147,24 +147,24 @@ export default function AboutUs() {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="absolute w-[150px] h-[150px] bg-yellow-400 rounded-full opacity-20 blur-xl"></div>
+            <div className="absolute w-[200px] h-[200px] bg-yellow-400 rounded-full opacity-30 blur-xl animate-pulse"></div>
             <motion.div
               animate={{ 
-                boxShadow: ["0px 0px 0px rgba(255,215,0,0)", "0px 0px 30px rgba(255,215,0,0.7)", "0px 0px 0px rgba(255,215,0,0)"] 
+                boxShadow: ["0px 0px 0px rgba(255,215,0,0)", "0px 0px 50px rgba(255,215,0,0.9)", "0px 0px 0px rgba(255,215,0,0)"] 
               }}
               transition={{ 
-                duration: 3,
+                duration: 2.5,
                 repeat: Infinity,
                 repeatType: "reverse"
               }}
-              className="relative z-10"
+              className="relative z-10 bg-white/10 p-2 rounded-full"
             >
               <Image 
                 src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
                 alt="MAD - Management Advisor" 
-                width={150} 
-                height={150}
-                className="object-contain drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]"
+                width={180} 
+                height={180}
+                className="object-contain drop-shadow-[0_0_25px_rgba(255,215,0,0.9)]"
               />
             </motion.div>
           </motion.div>
