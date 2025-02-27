@@ -37,11 +37,21 @@ export default function Hero() {
       <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <AnimatedSection direction="left">
+            <div className="mb-8">
+              <Image 
+                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
+                alt="MAD - Management Advisor" 
+                width={100} 
+                height={100}
+                className="object-contain"
+                priority
+              />
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight text-hero-title">
               Bando Turismo Sicilia 2025
             </h1>
             <p className="text-xl text-white mb-8 max-w-2xl text-hero-subtitle">
-              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Fondo da 75 milioni di euro.
+              Finanziamenti fino all'<span className="text-yellow-400 text-glow-yellow font-bold">80%</span> a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Fondo da 135 milioni di euro.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <AnimatedButton 
@@ -95,7 +105,15 @@ export default function Hero() {
                     transition={{ delay: 1.2 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Apertura bando prevista per il 2025</span>
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Premialità per immobili degradati e di interesse storico architettonico</span>
+                  </motion.li>
+                  <motion.li 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.4 }}
+                    className="flex items-center gap-2"
+                  >
+                    <span className="text-yellow-400 font-bold">✓</span> <span className="text-shadow-sm">Premialità per investimenti in aree rurali, a bassa marginalità e isole minori</span>
                   </motion.li>
                 </ul>
               </div>

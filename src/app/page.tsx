@@ -2,8 +2,6 @@
 
 import React from 'react';
 import Hero from './components/Hero';
-import Dettagli from './components/Dettagli';
-import Features from './components/Features';
 import Eligibility from './components/Eligibility';
 import FAQ from './components/FAQ';
 import CallToAction from './components/CallToAction';
@@ -15,10 +13,8 @@ export default function Home() {
   return (
     <main>
       <Hero />
-      <Dettagli />
       <AboutUs />
       <BandoAreas />
-      <Features />
       <Eligibility />
       <Testimonials />
       <FAQ />

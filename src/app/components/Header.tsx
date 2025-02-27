@@ -23,15 +23,6 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <div className="mr-4">
-              <Image 
-                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
-                alt="MAD - Management Advisor" 
-                width={70} 
-                height={70}
-                className="object-contain drop-shadow-[0_0_10px_rgba(255,215,0,0.7)] border-2 border-yellow-400 rounded-full p-1"
-              />
-            </div>
             <div>
               <h1 className="text-xl font-bold text-white">Bando Turismo 2025</h1>
               <p className="text-sm text-gray-300">Finanziamenti per le imprese turistiche</p>

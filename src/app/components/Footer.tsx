@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaLinkedin } from 'react-icons/fa';
 
 const Footer = () => {
   return (
@@ -13,15 +13,16 @@ const Footer = () => {
           <div>
             <div className="mb-6">
               <Image
-                src="/logo.png"
-                alt="Management Advisor Logo"
-                width={180}
-                height={60}
-                className="rounded-md"
+                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png"
+                alt="MAD - Management Advisor"
+                width={120}
+                height={120}
+                className="object-contain drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
               />
             </div>
             <p className="text-gray-400 mb-4">
-              Specialisti in consulenza per l'accesso ai fondi del Bando Turismo Sicilia 2025 per le imprese turistiche siciliane.
+              • Premialità per immobili degradati e di interesse storico architettonico<br/>
+              • Premialità per investimenti in aree rurali, a bassa marginalità e isole minori
             </p>
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Management Advisor. Tutti i diritti riservati.
@@ -33,15 +34,15 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-center">
                 <FaPhone className="text-blue-400 mr-3" />
-                <a href="tel:+390917308101" className="hover:text-blue-400 transition-colors">+39 091 7308101</a>
+                <a href="tel:+390953288293" className="hover:text-blue-400 transition-colors">+39 095.3288293</a>
               </li>
               <li className="flex items-center">
                 <FaEnvelope className="text-blue-400 mr-3" />
-                <a href="mailto:info@managementadvisor.it" className="hover:text-blue-400 transition-colors">info@managementadvisor.it</a>
+                <a href="mailto:info@management-advisor.eu" className="hover:text-blue-400 transition-colors">info@management-advisor.eu</a>
               </li>
               <li className="flex items-start">
                 <FaMapMarkerAlt className="text-blue-400 mr-3 mt-1" />
-                <span>Via Notarbartolo, 5<br />90141 Palermo (PA)</span>
+                <span>Via Alessandro Manzoni snc<br />95037 San Giovanni La Punta (CT)</span>
               </li>
             </ul>
           </div>
@@ -50,41 +51,32 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-6 border-b border-gray-700 pb-2">Link Utili</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#about" className="hover:text-blue-400 transition-colors">Chi Siamo</Link>
+                <a href="https://management-advisor.eu/chi-siamo/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Chi Siamo</a>
               </li>
               <li>
-                <Link href="#services" className="hover:text-blue-400 transition-colors">Servizi</Link>
+                <a href="https://management-advisor.eu/clienti/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">I Nostri Clienti</a>
               </li>
               <li>
-                <Link href="#features" className="hover:text-blue-400 transition-colors">Codici ATECO</Link>
+                <a href="https://management-advisor.eu/finanza-agevolata/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Servizi</a>
               </li>
               <li>
-                <Link href="#eligibility" className="hover:text-blue-400 transition-colors">Requisiti</Link>
+                <a href="https://management-advisor.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
               </li>
               <li>
-                <Link href="#process" className="hover:text-blue-400 transition-colors">Processo</Link>
+                <a href="https://management-advisor.eu/cookie-policy/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Cookie Policy</a>
+              </li>
+              <li>
+                <a href="https://management-advisor.eu/termini-e-condizioni/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Termini e Condizioni</a>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-xl font-bold mb-6 border-b border-gray-700 pb-2">Informazioni Legali</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
-              </li>
-              <li>
-                <Link href="/cookie-policy" className="hover:text-blue-400 transition-colors">Cookie Policy</Link>
-              </li>
-              <li>
-                <Link href="/termini-condizioni" className="hover:text-blue-400 transition-colors">Termini e Condizioni</Link>
-              </li>
-              <li>
-                <p className="text-gray-400 text-sm mt-4">
-                  P.IVA: 06919670828<br />
-                  REA: PA-398205
-                </p>
-              </li>
+            <h3 className="text-lg font-semibold mb-4 text-gray-100">Informazioni Legali</h3>
+            <ul className="space-y-2">
+              <li className="text-gray-400">Privacy Policy</li>
+              <li className="text-gray-400">Cookie Policy</li>
+              <li className="text-gray-400">Termini e Condizioni</li>
             </ul>
           </div>
         </div>
@@ -93,9 +85,6 @@ const Footer = () => {
           <div className="flex space-x-4 mb-4 md:mb-0">
             <a href="https://www.facebook.com/managementadvisor" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
               <FaFacebook size={24} />
-            </a>
-            <a href="https://www.instagram.com/management_advisor/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
-              <FaInstagram size={24} />
             </a>
             <a href="https://www.linkedin.com/company/management-advisor-srl/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
               <FaLinkedin size={24} />

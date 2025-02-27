@@ -148,14 +148,9 @@ export default function AboutUs() {
               delay: 0.2
             }}
           >
-            <Image
-              src="/logo.png"
-              alt="Management Advisor Logo"
-              width={280}
-              height={280}
-              className="rounded-lg shadow-2xl hover:shadow-blue-300/50 transition-all duration-500 hover:scale-105"
-              style={{ filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.5))' }}
-            />
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Chi Siamo
+            </h2>
           </motion.div>
         </AnimateWhenVisible>
 
@@ -165,34 +160,8 @@ export default function AboutUs() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.div 
-            className="flex justify-center mb-6 relative"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <div className="absolute w-[200px] h-[200px] bg-yellow-400 rounded-full opacity-30 blur-xl animate-pulse"></div>
-            <motion.div
-              animate={{ 
-                boxShadow: ["0px 0px 0px rgba(255,215,0,0)", "0px 0px 50px rgba(255,215,0,0.9)", "0px 0px 0px rgba(255,215,0,0)"] 
-              }}
-              transition={{ 
-                duration: 2.5,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-              className="relative z-10 bg-white/10 p-2 rounded-full"
-            >
-              <Image 
-                src="/images/logo_MAD_white-yellow-300x300-1-150x150.png" 
-                alt="MAD - Management Advisor" 
-                width={180} 
-                height={180}
-                className="object-contain drop-shadow-[0_0_25px_rgba(255,215,0,0.9)]"
-              />
-            </motion.div>
-          </motion.div>
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-black mb-4"
+            className="text-3xl md:text-4xl font-bold text-black mb-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -200,12 +169,14 @@ export default function AboutUs() {
             Management Advisor
           </motion.h2>
           <motion.p 
-            className="text-gray-600 max-w-3xl mx-auto text-lg"
+            className="text-gray-600 max-w-3xl mx-auto text-lg leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Il partner ideale per accedere ai finanziamenti del Bando Turismo Sicilia 2025
+            Siamo specialisti nella consulenza per l'accesso ai fondi del Bando Turismo Sicilia 2025. 
+            Con la nostra esperienza decennale nel settore della finanza agevolata, 
+            aiutiamo le imprese turistiche siciliane a cogliere al meglio questa opportunità di crescita e sviluppo.
           </motion.p>
         </motion.div>
 
@@ -259,7 +230,7 @@ export default function AboutUs() {
               <CounterBox number="100+" label="Progetti finanziati" delay={0.2} />
               <CounterBox number="95%" label="Tasso di successo" delay={0.4} />
               <CounterBox number="10+" label="Anni di esperienza" delay={0.6} />
-              <CounterBox number="8M" label="Euro ottenuti per i clienti" delay={0.8} />
+              <CounterBox number="23M" label="Euro ottenuti per i clienti" delay={0.8} />
             </div>
           </AnimateWhenVisible>
           
@@ -271,7 +242,7 @@ export default function AboutUs() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
               <Image 
-                src="https://placehold.co/600x400/333333/FFFFFF?text=Team+Management+Advisor" 
+                src="/images/Team Mad (1).jpg" 
                 alt="Il team di Management Advisor" 
                 fill
                 style={{ objectFit: 'cover' }}

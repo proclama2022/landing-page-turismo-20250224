@@ -97,8 +97,8 @@ export default function CallToAction() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-shadow-sm text-outline-sm">Scadenza del bando</p>
-                    <p className="text-yellow-300 text-shadow-sm">30 aprile 2025</p>
+                    <p className="font-semibold text-white text-shadow-sm text-outline-sm">Apertura del bando</p>
+                    <p className="text-yellow-300 text-shadow-sm">In attesa di pubblicazione</p>
                   </div>
                 </div>
                 
@@ -110,7 +110,7 @@ export default function CallToAction() {
                   </div>
                   <div>
                     <p className="font-semibold text-white text-shadow-sm text-outline-sm">Fondi disponibili</p>
-                    <p className="text-yellow-300 text-shadow-sm">75 milioni di euro</p>
+                    <p className="text-yellow-300 text-shadow-sm">135 milioni di euro</p>
                   </div>
                 </div>
                 

@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { FormState } from '@/types/form';
+import CitySelect from '../CitySelect';
+import { cities, City } from '@/app/data/cityData';
 
 interface LocationStepProps {
   formData: FormState;
@@ -26,6 +28,28 @@ export default function LocationStep({ formData, updateFormData }: LocationStepP
     });
   };
 
+  const handleCitySelect = (cityName: string) => {
+    const localUnit = formData.localUnit || {
+      municipality: '',
+      province: '',
+      address: '',
+      postalCode: ''
+    };
+
+    // Trova la città selezionata nei dati delle città
+    const selectedCity = cities.find((city: City) => city.name === cityName);
+    
+    if (selectedCity) {
+      updateFormData({
+        localUnit: {
+          ...localUnit,
+          municipality: selectedCity.name,
+          province: selectedCity.province
+        }
+      });
+    }
+  };
+
   const localUnit = formData.localUnit || {
     municipality: '',
     province: '',
@@ -36,35 +60,12 @@ export default function LocationStep({ formData, updateFormData }: LocationStepP
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">Unità Locale</h2>
+      
       <div>
-        <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">
-          Comune *
-        </label>
-        <input
-          type="text"
-          id="municipality"
-          name="municipality"
-          required
+        <CitySelect
           value={localUnit.municipality}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-          placeholder="Comune"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
-          Provincia *
-        </label>
-        <input
-          type="text"
-          id="province"
-          name="province"
-          required
-          value={localUnit.province}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-          placeholder="Provincia"
+          onChange={handleCitySelect}
+          error={undefined}
         />
       </div>
 
