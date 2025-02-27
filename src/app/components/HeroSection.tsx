@@ -27,7 +27,7 @@ const HeroSection = ({ onOpenForm }: HeroSectionProps) => {
               Verifica la tua Idoneità
             </button>
           </div>
-          <div className="flex-1 relative h-[400px] w-full">
+            <div className="flex-1 relative h-[400px]">
             <div className="absolute inset-0 bg-blue-100 rounded-lg -rotate-2"></div>
             <Image
               src="https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
