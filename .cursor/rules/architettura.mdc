@@ -1,0 +1,58 @@
+---
+description: per la struttura della landing page
+globs: 
+---
+
+# Your rule content
+
+Questa regola definisce lo schema di cartelle e file da adottare per la nuova landing page realizzata con Next.js.
+In particolare, vengono indicati:
+• I file e le cartelle essenziali per la struttura Next.js.
+• La suddivisione in componenti e pagine, per garantire una UX modulare e facilmente manutenibile.
+• La gestione degli asset statici e dei file di stile.
+
+L'obiettivo è avere una base strutturata e coerente per lo sviluppo, facilitando la gestione del progetto e garantendo un'architettura scalabile.
+actions:
+
+insert_snippet: |
+/*
+--------------------- ARCHITETTURA DEL PROGETTO ----------------------------
+
+Landing Page Next.js - Struttura di Base:
+
+root/
+└── landing-page/
+├── pages/
+│ ├── index.js -> Pagina principale della landing page
+│ └── _app.js -> File di wrapping globale (per layout e stili comuni)
+│
+├── components/
+│ ├── Header.js -> Header: Logo, titolo e tagline
+│ ├── HeroSection.js -> Sezione iniziale con immagine/slider e messaggio d’apertura
+│ ├── FormSection.js -> Sezione form interattivo (campi condizionali, logica di calcolo)
+│ ├── Risultato.js -> Sezione per visualizzazione del punteggio e messaggio di feedback
+│ └── CallToAction.js -> Sezione chiamata all’azione (CTA) per contatto
+│
+├── public/
+│ ├── images/ -> Immagini e asset multimediali
+│ └── icons/ -> Icone (logo, pulsanti, ecc.)
+│
+├── styles/
+│ ├── globals.css -> Stili globali (inclusa la definizione della palette colori, tipografia e layout responsive)
+│ └── landing.module.css -> Stili specifici per la landing page (optional, per componenti a parte)
+│
+└── docs/
+├── schema_ux.txt -> Linee guida per la UX e il design della landing page
+└── schema_calcolo.pdf -> Documentazione sul sistema di calcolo del punteggio
+
+--------------------- NOTE SULL'ARCHITETTURA ----------------------------
+• Utilizzare la cartella "pages" per gestire le route di Next.js.
+• I componenti modulari vanno in "components", facilitando il riuso del codice.
+• "public" ospita asset statici (immagini, fonts, ecc.) accessibili direttamente.
+• "styles" contiene il CSS globale e specifico per garantire un design coerente e responsive.
+• La cartella "docs" è utile per mantenere documentazione tecnica e linee guida strategiche per UX, design e logica.
+
+Questa struttura permette una separazione chiara delle responsabilità e sostiene lo sviluppo scalabile della landing page.
+*/
+- You can @ files here
+- You can use markdown but dont have to

@@ -1,0 +1,52 @@
+---
+description: il design della landing page
+globs: 
+---
+
+# Your rule content
+
+Questa regola definisce le linee guida per un design moderno della landing page realizzata in Next.js.
+Le best practice includono: una struttura visiva chiara e minimalista, utilizzo accurato degli spazi bianchi,
+palette colori bilanciata, tipografia leggibile e gerarchica, microinterazioni e transizioni fluide,
+design responsive e accessibilità. L’obiettivo è creare un’esperienza utente coinvolgente, performante e accessibile.
+actions:
+insert_snippet: |
+/*
+--------------------- LINEE GUIDA DESIGN MODERNO ---------------------------
+
+STRUTTURA E ARCHITETTURA VISIVA:
+Adottare un layout a griglia o a card per organizzare il contenuto in modo chiaro.
+Utilizzare ampi spazi bianchi per definire la gerarchia visiva e mettere in evidenza le CTA.
+Strutturare la pagina in sezioni ben definite:
+• Header: Logo, titolo e tagline.
+• Hero Section: Sezione di apertura con un messaggio d’impatto e immagine/slider.
+• Informazioni/Feature Section: Presentazione dei principali vantaggi o funzionalità.
+• Form Section: Area interattiva con campi condizionali per la valutazione del punteggio.
+• Risultato e Call-to-Action: Feedback visivo e invito chiaro all’azione.
+• Footer: Informazioni legali e link utili.
+PALETTE COLORI:
+Scegliere colori primari neutri (bianco, grigio) abbinati a colori accentati moderni (es. blu elettrico, verde menta) per dare energia.
+Garantire contrasto elevato per accessibilità e leggibilità.
+TIPOGRAFIA:
+Utilizzare font moderni e sans-serif (es. "Roboto", "Open Sans").
+Stabilire una chiara gerarchia tipografica: titoli in bold e di grandi dimensioni, sottotitoli e corpo testo con dimensioni a partire da 16px.
+Curare le spaziature (line-height, margini e padding) per una migliore leggibilità.
+INTERAZIONI E MICROINTERAZIONI:
+Implementare transizioni fluide ed animazioni leggere per hover, click e altri eventi interattivi.
+Fornire feedback immediato agli utenti (es. pulsanti che cambiano colore al passaggio del mouse).
+RESPONSIVE DESIGN:
+Utilizzare CSS Grid o Flexbox per creare layout fluidi e adattabili.
+Applicare media queries per ottimizzare la visualizzazione su dispositivi mobili, tablet e desktop.
+ACCESSIBILITÀ:
+Seguire le linee guida WCAG per garantire contrasti e navigazione accessibili.
+Utilizzare tag HTML semantici (header, main, footer, nav) per una migliore struttura e compatibilità con i lettori di schermo.
+PERFORMANCE:
+Ottimizzare il caricamento delle immagini adottando formati moderni (es. WebP) e lazy loading.
+Minimizzare e comprimere i file CSS e JavaScript per migliorare i tempi di caricamento.
+USABILITÀ E PRESENTAZIONE DEL CONTENUTO:
+Mantenere un design minimalista, eliminando elementi superflui per non sovraccaricare l’utente.
+Posizionare le call-to-action (CTA) in maniera strategica, con copy motivazionale e pulsanti evidenti.
+Assicurarsi che il contenuto sia facilmente scansionabile, con uso di titoli, elenchi e punti salienti.
+
+- You can @ files here
+- You can use markdown but dont have to

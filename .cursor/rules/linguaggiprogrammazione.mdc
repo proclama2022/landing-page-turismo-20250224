@@ -1,0 +1,41 @@
+---
+description: la struttura e i linguaggi di programmazione
+globs: 
+---
+
+# Your rule content
+
+Specifica il linguaggio e le tecnologie da utilizzare per lo sviluppo della landing page in Next.js,
+insieme alle best practice da seguire per garantire un codice di qualità, manutenibile e performante.
+La regola include configurazioni per ESLint, Prettier, e le convenzioni per la scrittura di componenti React.
+actions:
+insert_snippet: |
+/*
+--------------------- LINEE GUIDA PER IL LINGUAGGIO DI PROGRAMMAZIONE ---------------------------
+
+LINGUAGGIO E FRAMEWORK:
+Utilizzare Next.js (versione 12 o superiore) e React per lo sviluppo della landing page.
+Sfruttare le funzionalità chiave di Next.js:
+• Routing automatico mediante la cartella "pages".
+• Static Generation (SSG) e/o Server-Side Rendering (SSR) per performance ottimali.
+• API Routes per eventuali interazioni lato server.
+BEST PRACTICE DI CODIFICA:
+Preferire componenti funzionali ed Hook per la gestione dello state e degli effetti.
+Separare i componenti in maniera modulare: ogni componente riutilizzabile va in "components".
+Adottare TypeScript, se possibile, per tipizzare il codice e ridurre gli errori.
+Utilizzare nomi descrittivi per variabili, funzioni e componenti, garantendo chiarezza e leggibilità.
+Seguire le best practice di React: mantenere i componenti "pure", gestire gli effetti collaterali tramite "useEffect" ed evitare stato locale eccessivo.
+CONFIGURAZIONE E STRUMENTI:
+Impostare ESLint con configurazioni specifiche per Next.js/React per mantenere uno stile di codice coerente e prevenire errori.
+Configurare Prettier per la formattazione automatica del codice.
+Adottare una strategia di commit (ad esempio Git Flow) con commit messages chiari e descrittivi.
+Considerare l’uso di Storybook per documentare e testare i componenti UI, facilitando il lavoro in team.
+DOCUMENTAZIONE E COMMENTI:
+Documentare ed annotare adeguatamente i componenti e le funzioni con commenti esplicativi.
+Mantenere una documentazione tecnica aggiornata in "docs/language_best_practices.txt" che includa esempi, linee guida e note sul refactoring.
+PERFORMANCE:
+Ottimizzare il caricamento delle pagine attraverso il code splitting e l’uso mirato della Static Generation di Next.js.
+Utilizzare il sistema di ottimizzazione immagini integrato di Next.js, preferendo formati moderni (es. WebP).
+
+- You can @ files here
+- You can use markdown but dont have to

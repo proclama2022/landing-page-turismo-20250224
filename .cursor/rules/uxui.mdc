@@ -1,0 +1,43 @@
+---
+description: Questa regola definisce le linee guida per ottimizzare l’esperienza utente (UX) e l’interfaccia utente (UI) della landing page realizzata in Next.js. L’obiettivo è creare un ambiente interattivo, intuitivo e accessibile che guidi l’utente attraverso il flusso di valutazione e decisione.
+globs: 
+---
+
+# Your rule content
+
+--------------------- LINEE GUIDA UX --------------------------
+
+ARCHITETTURA INFORMAZIONALE:
+Strutturare il contenuto in sezioni ben definite: Header, Hero Section, Form Section, Risultato & Feedback, Call-to-Action e Footer.
+Mantenere una gerarchia visiva chiara per facilitare la scansione del contenuto.
+Utilizzare layout a griglia o in colonne (CSS Grid/Flexbox) per organizzare le informazioni in modo coerente.
+FLUSSO UTENTE:
+Pianificare un percorso logico:
+• Introduzione immediata e coinvolgente (Hero Section).
+• Invito all’azione tramite il form interattivo.
+• Feedback dinamico e visualizzazione del punteggio.
+• Chiamata all’azione persuasiva per contatto.
+Fornire feedback immediato ad ogni interazione, con messaggi chiari che guidino l’utente.
+ACCESSIBILITÀ:
+Assicurare contrasti elevati per la leggibilità, in particolare per utenti con deficit visivi.
+Utilizzare tag e attributi semantici (es. <header>, <main>, <footer>, aria-labels) per facilitare la navigazione assistita da tecnologie per l’accessibilità.
+Garantire che tutti gli elementi interattivi siano raggiungibili tramite tastiera.
+--------------------- LINEE GUIDA UI --------------------------
+
+DESIGN VISIVO:
+Adottare un design moderno e minimalista, con ampi spazi bianchi per separare le sezioni e mettere in evidenza le CTA.
+Utilizzare una palette colori coerente con il brand, prediligendo tonalità neutre (bianco, grigio) per lo sfondo e colori accenti (ad es. blu elettrico, verde menta) per gli elementi interattivi.
+Selezionare font moderni e sans-serif (es. "Roboto", "Open Sans") e definire una gerarchia tipografica chiara (titoli, sottotitoli, corpo testo).
+ELEMENTI INTERATTIVI:
+Progettare pulsanti e form input con transizioni fluide (hover, focus) per creare microinterazioni piacevoli.
+Utilizzare placeholder e etichette esplicite per i campi del form, insieme a messaggi di validazione in tempo reale.
+Implementare animazioni leggere per gli stati "attivo" e "disabilitato" dei controlli interattivi, migliorando il feedback visivo.
+RESPONSIVE DESIGN:
+Creare layout fluidi utilizzando CSS Grid o Flexbox, accompagnati da media queries per garantire ottimizzazione su dispositivi mobile, tablet e desktop.
+Verificare che i contenuti (testo, immagini, form) si adattino correttamente a diverse risoluzioni.
+USABILITÀ E PERFORMANCE:
+Mantenere il design semplice ed essenziale, evitando elementi superflui che possano distrarre l’utente.
+Ottimizzare il caricamento delle immagini e degli asset, utilizzando formati moderni (es. WebP) e la tecnica di lazy loading.
+Monitorare l’usabilità e condurre test per raccogliere feedback degli utenti e apportare migliorie continue.
+- You can @ files here
+- You can use markdown but dont have to

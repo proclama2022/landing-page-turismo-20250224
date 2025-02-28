@@ -1,0 +1,72 @@
+---
+description: per calcolare il punteggio utente nel form condizionale
+globs: 
+---
+
+# Your rule content
+
+Definisce lo schema e le regole base per il calcolo del punteggio della landing page in base alla griglia di valutazione "de minimis".
+I criteri considerati sono:
+• Criterio A: Rapporto Occupazione/Investimento
+• Criterio B: Rapporto Costo Investimento (escluso suolo) / Valore Immobilizzazioni
+• Criterio C: Indicatori finanziari (ROI, ROS) e tipologia intervento
+• Criterio D: Punti aggiuntivi per la sostenibilità ambientale (ogni checkbox selezionata vale +2)
+• Criterio E: Punteggio per l'area dell'intervento (tre, due, o singola area)
+Questo schema serve sia per guidare l’implementazione del calcolo nel file "FormSection.js" sia per aggiornare la documentazione (schema_calcolo.pdf) come riferimento per il team.
+actions:
+insert_snippet: |
+/*
+--------------------- LINEE GUIDA SISTEMA DI CALCOLO ----------------------
+
+Criterio A - Occupazione / Investimento:
+• Calcolo: rapporto = Nuove ULA / (Costo Investimento / 150.000)
+• Punteggi:
+- rapporto >= 2 ........ 5 punti
+- rapporto >= 1.5 ........ 3 punti
+- rapporto >= 1 ........ 2 punti
+- altrimenti ........ 0 punti
+
+Criterio B - Investimento vs Valore Immobilizzazioni:
+• Calcolo: rapporto = Costo Investimento (escluso suolo) / Valore Immobilizzazioni
+• Punteggi:
+- rapporto <= 1.5 ........ 15 punti
+- rapporto <= 2 ........ 8 punti
+- rapporto <= 3 ........ 4 punti
+- maggiore di 3 ........ 0 punti
+
+Criterio C - Indicatori finanziari e tipologia dell’intervento:
+• Tipologia intervento:
+- Restauro e/o risanamento ........ punteggio elevato (es. +7/10)
+- Manutenzione straordinaria ........ punteggio medio (es. +4)
+- Ristrutturazione ........ punteggio base (es. +4)
+• Indicatori finanziari:
+- ROI:
+>20% ........ +9 punti
+>=10% ....... +5 punti
+>=3% ........ +3 punti
+- ROS:
+>13% ........ +9 punti
+>=2% ........ +5 punti
+>=1% ........ +3 punti
+• Rapporto investimenti ammessi (valore normalizzato tra 0 e 1):
+1 ........ 10 punti
+>=0.8 ........ 7 punti
+>=0.65 ........ 5 punti
+>=0.5 ........ 0 punti
+
+Criterio D - Sostenibilità ambientale:
+• Per ogni opzione di sostenibilità selezionata (es. domotica, solare termico, fotovoltaico, cappotto termico, relamping LED): +2 punti per opzione
+
+Criterio E - Area dell'intervento:
+• Selezione dell'area:
+- Tre aree specificate ........ 10 punti
+- Due aree specificate ........ 6 punti
+- Area singola (rurale, isola, marginalità) ........ 3 punti
+
+La somma dei punteggi dei cinque criteri determinerà il punteggio finale.
+Una soglia minima (ad esempio 40 punti) potrà essere usata per indicare il potenziale finanziabile del progetto.
+
+Implementare questo schema nel file "FormSection.js" in Next.js, assicurandosi di mappare ogni input del form alla rispettiva parte del calcolo.
+
+- You can @ files here
+- You can use markdown but dont have to
