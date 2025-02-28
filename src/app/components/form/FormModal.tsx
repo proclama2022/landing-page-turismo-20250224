@@ -1,196 +1,250 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
+import { FormState } from '@/types/form';
 import PersonalInfoStep from './steps/PersonalInfoStep';
-import EligibilityStep from './steps/EligibilityStep';
-import CompanyStep from './steps/CompanyStep';
-import LocationStep from './steps/LocationStep';
+import CompanyInfoStep from './steps/CompanyInfoStep';
 import ProjectStep from './steps/ProjectStep';
-import FinalStep from './steps/FinalStep';
-import StepIndicator from './StepIndicator';
-import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
+import AdditionalInfoStep from './steps/AdditionalInfoStep';
+import { X } from 'lucide-react';
 
 interface FormModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: { (): void; (): Promise<void>; };
 }
 
-interface Step {
-  id: number;
-  title: string;
-  component: React.ComponentType<any>;
-}
+const initialFormState: FormState = {
+  // Dati di contatto
+  email: '',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  role: 'imprenditore',
+  
+  // Soggetto richiedente
+  isRegisteredCompany: false,
+  hasClassificationRequirements: false,
+  hadRevokedFunds: false,
+  hasRelocated: false,
+  willNotRelocate: false,
+  isPartOfGroup: false,
 
-const STEPS: Step[] = [
-  { id: 1, title: 'Dati di contatto', component: PersonalInfoStep },
-  { id: 2, title: 'Requisiti di ammissibilità', component: EligibilityStep },
-  { id: 3, title: 'Anagrafica aziendale', component: CompanyStep },
-  { id: 4, title: 'Unità locale', component: LocationStep },
-  { id: 5, title: 'Dettagli investimento', component: ProjectStep },
-  { id: 6, title: 'Conferma', component: FinalStep },
-];
+  // Anagrafica aziendale
+  companyName: '',
+  vatNumber: '',
+  foundationDate: '',
+  registrationDate: '',
+  atecoCode: '',
+  companySize: 'micro',
+
+  // Unità locale
+  city: '',
+  province: '',
+  address: '',
+  zipCode: '',
+
+  // Dettagli investimento
+  projectDescription: '',
+  interventionType: 'ampliamento',
+  projectPurpose: [],
+  plannedExpenses: [],
+  willHireEmployees: false,
+  involvesRundownProperty: false,
+  isHistoricalBuilding: false,
+  investmentAmount: 'fino100',
+  
+  // Come ci hai conosciuto
+  howFound: '',
+  
+  // Privacy
+  privacyConsent: false,
+};
 
 export default function FormModal({ isOpen, onClose }: FormModalProps) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
-  const [score, setScore] = useState(0);
+  const [formData, setFormData] = useState<FormState>(initialFormState);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
+  const steps = [
+    { title: 'Dati di contatto', component: PersonalInfoStep },
+    { title: 'Soggetto richiedente', component: CompanyInfoStep },
+    { title: 'Progetto', component: ProjectStep },
+    { title: 'Informazioni aggiuntive', component: AdditionalInfoStep },
+  ];
 
-  const calculateScore = () => {
-    let newScore = 0;
-    
-    // Calcolo del punteggio basato sui dati del form
-    if (formData.investmentType === 'ampliamento') newScore += 20;
-    if (formData.investmentType === 'nuova_struttura') newScore += 15;
-    if (formData.investmentType === 'recupero_immobile') newScore += 25;
-    
-    if (formData.investmentPurpose === 'enhanceTourism') newScore += 15;
-    if (formData.investmentPurpose === 'qualityStandards') newScore += 20;
-    if (formData.investmentPurpose === 'serviceImprovement') newScore += 25;
-    
-    if (formData.expenseTypes.includes('propertyPurchase')) newScore += 10;
-    if (formData.expenseTypes.includes('construction')) newScore += 15;
-    if (formData.expenseTypes.includes('equipment')) newScore += 20;
-    
-    if (formData.investmentAmount === 'under100k') newScore += 10;
-    if (formData.investmentAmount === '100k-500k') newScore += 15;
-    if (formData.investmentAmount === '500k-1M') newScore += 20;
-    if (formData.investmentAmount === 'over1M') newScore += 25;
-    
-    setScore(newScore);
+  const updateFormData = (updates: Partial<FormState>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleNext = () => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1);
-      if (currentStep === STEPS.length - 1) {
-        calculateScore();
-      }
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      handleSubmit();
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
-  const handleChange = (name: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      // Simulazione di invio dati
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log('Form submitted:', formData);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const updateFormData = (updates: Partial<FormState>) => {
-    setFormData(prev => ({
-      ...prev,
-      ...updates
-    }));
+  const handleReset = () => {
+    setFormData(initialFormState);
+    setCurrentStep(0);
+    setIsSubmitted(false);
   };
 
-  if (!isOpen) return null;
+  const CurrentStepComponent = steps[currentStep].component;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+    <div
+      className={`fixed inset-0 z-50 overflow-hidden transition-all duration-300 ${
+        isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div
+          className={`w-full max-w-2xl bg-white rounded-xl shadow-xl transition-all duration-300 transform ${
+            isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          }`}
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden"
-          >
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {STEPS.find(step => step.id === currentStep)?.title || 'Form'}
-              </h2>
+          <div className="flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800">Richiedi informazioni</h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                aria-label="Chiudi"
               >
-                <XMarkIcon className="h-6 w-6" />
+                <X className="h-5 w-5 text-gray-500" />
               </button>
             </div>
 
-            <div className="p-6">
-              <StepIndicator steps={STEPS} currentStep={currentStep} />
-
-              <div className="mt-8 overflow-y-auto max-h-[calc(90vh-250px)]">
-                {currentStep === 1 && (
-                  <PersonalInfoStep formData={formData} updateFormData={updateFormData} />
-                )}
-                {currentStep === 2 && (
-                  <EligibilityStep formData={formData} updateFormData={updateFormData} />
-                )}
-                {currentStep === 3 && (
-                  <CompanyStep formData={formData} updateFormData={updateFormData} />
-                )}
-                {currentStep === 4 && (
-                  <LocationStep formData={formData} updateFormData={updateFormData} />
-                )}
-                {currentStep === 5 && (
-                  <ProjectStep 
-                    formData={formData} 
-                    onChange={handleChange} 
-                  />
-                )}
-                {currentStep === 6 && (
-                  <FinalStep 
-                    formData={formData} 
-                    updateFormData={updateFormData} 
-                  />
-                )}
-
-                <div className="mt-8 flex justify-between">
-                  {currentStep > 1 && (
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      Indietro
-                    </button>
-                  )}
-                  {currentStep === 1 && (
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      Annulla
-                    </button>
-                  )}
+            <div className="flex-1 overflow-y-auto p-6">
+              {isSubmitted ? (
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">Grazie per la tua richiesta!</h3>
+                  <p className="text-gray-600 max-w-md">
+                    Abbiamo ricevuto le tue informazioni e ti contatteremo al più presto per discutere del tuo progetto.
+                  </p>
                   <button
-                    type="button"
-                    onClick={handleNext}
-                    className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+                    onClick={handleReset}
+                    className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                   >
-                    {currentStep < STEPS.length ? 'Continua' : 'Invia'}
+                    Invia un'altra richiesta
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                      {steps.map((step, index) => (
+                        <React.Fragment key={index}>
+                          <div className="flex flex-col items-center">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                                index < currentStep
+                                  ? 'bg-blue-600 text-white'
+                                  : index === currentStep
+                                  ? 'bg-blue-100 text-blue-600 border-2 border-blue-600'
+                                  : 'bg-gray-100 text-gray-500'
+                              }`}
+                            >
+                              {index < currentStep ? (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              ) : (
+                                index + 1
+                              )}
+                            </div>
+                            <span className="text-xs mt-1 text-gray-500">{step.title}</span>
+                          </div>
+                          {index < steps.length - 1 && (
+                            <div
+                              className={`flex-1 h-0.5 mx-2 ${
+                                index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                              }`}
+                            />
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+
+                  <CurrentStepComponent 
+                    formData={formData} 
+                    updateFormData={updateFormData}
+                  />
+                </>
+              )}
+            </div>
+
+            {!isSubmitted && (
+              <div className="p-6 border-t border-gray-200 bg-gray-50">
+                <div className="flex justify-between">
+                  <button
+                    onClick={handleBack}
+                    disabled={currentStep === 0}
+                    className={`px-4 py-2 rounded-lg border border-gray-300 ${
+                      currentStep === 0
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    } transition-colors duration-200`}
+                  >
+                    Indietro
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className={`px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200 ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Elaborazione...
+                      </span>
+                    ) : currentStep === steps.length - 1 ? (
+                      'Invia richiesta'
+                    ) : (
+                      'Avanti'
+                    )}
                   </button>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
-} 
+}

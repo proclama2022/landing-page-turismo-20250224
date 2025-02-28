@@ -2,26 +2,30 @@
 
 import React, { useState } from 'react';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
+import { BaseStepProps } from '@/types/components';
 import PersonalInfoStep from './steps/PersonalInfoStep';
-import EligibilityStep from './steps/EligibilityStep';
-import CompanyStep from './steps/CompanyStep';
-import LocationStep from './steps/LocationStep';
 import ProjectStep from './steps/ProjectStep';
-import FinalStep from './steps/FinalStep';
+import CompanyInfoStep from './steps/CompanyInfoStep';
+import ExpensesStep from './steps/ExpensesStep';
+import AdditionalInfoStep from './steps/AdditionalInfoStep';
 import { X } from 'lucide-react';
 
 interface FormDialogProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: () => Promise<void> | void;
 }
 
-const STEPS = [
-  { title: 'Dati di contatto', component: PersonalInfoStep },
-  { title: 'Requisiti di ammissibilità', component: EligibilityStep },
-  { title: 'Anagrafica aziendale', component: CompanyStep },
-  { title: 'Unità locale', component: LocationStep },
-  { title: 'Dettagli investimento', component: ProjectStep },
-  { title: 'Conferma', component: FinalStep },
+interface StepComponent {
+  title: string;
+  component: React.ComponentType<BaseStepProps>;
+}
+
+const STEPS: StepComponent[] = [
+  { title: 'Informazioni personali', component: PersonalInfoStep },
+  { title: 'Informazioni aziendali', component: CompanyInfoStep },
+  { title: 'Dettagli progetto', component: ProjectStep },
+  { title: 'Spese previste', component: ExpensesStep },
+  { title: 'Informazioni aggiuntive', component: AdditionalInfoStep },
 ];
 
 export function FormDialog({ isOpen, onClose }: FormDialogProps) {
@@ -30,26 +34,19 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleSubmit();
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+  const handleUpdate = (field: keyof FormState, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Qui puoi aggiungere la logica per inviare i dati al server
       console.log('Form submitted:', formData);
       setIsSubmitted(true);
+      await onClose();
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
@@ -57,23 +54,9 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
     }
   };
 
-  const updateFormData = (updates: Partial<FormState>) => {
-    setFormData(prev => ({
-      ...prev,
-      ...updates
-    }));
-  };
-
-  const handleFieldChange = (name: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  if (!isOpen) return null;
 
   const CurrentStepComponent = STEPS[currentStep].component;
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
@@ -83,7 +66,7 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
             {STEPS[currentStep].title}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => onClose()}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
             <X className="h-6 w-6" />
@@ -93,35 +76,36 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
           <CurrentStepComponent
             formData={formData}
-            updateFormData={updateFormData}
-            onChange={handleFieldChange}
+            onUpdate={handleUpdate}
           />
 
           <div className="mt-8 flex justify-between">
-            {currentStep > 0 && (
-              <button
-                type="button"
-                onClick={handleBack}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-              >
-                Indietro
-              </button>
-            )}
-            {currentStep === 0 && (
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-              >
-                Annulla
-              </button>
-            )}
             <button
               type="button"
-              onClick={handleNext}
-              className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+              onClick={() => {
+                if (currentStep > 0) {
+                  setCurrentStep(prev => prev - 1);
+                } else {
+                  onClose();
+                }
+              }}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
             >
-              {currentStep < STEPS.length - 1 ? 'Continua' : 'Invia'}
+              {currentStep === 0 ? 'Annulla' : 'Indietro'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (currentStep < STEPS.length - 1) {
+                  setCurrentStep(prev => prev + 1);
+                } else {
+                  handleSubmit();
+                }
+              }}
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Invio in corso...' : currentStep === STEPS.length - 1 ? 'Invia' : 'Avanti'}
             </button>
           </div>
         </div>

@@ -1,126 +1,94 @@
 'use client';
 
 import React from 'react';
-import { FormState } from '@/types/form';
-import FormField from '../FormField';
+import { BaseStepProps } from '@/types/components';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
-interface PersonalInfoStepProps {
-  formData: FormState;
-  updateFormData: (updates: Partial<FormState>) => void;
-}
-
-export default function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    updateFormData({ [name]: value });
-  };
-
+export default function PersonalInfoStep({ formData, onUpdate }: BaseStepProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-1">Informazioni personali</h2>
-        <p className="text-sm text-gray-500">Inserisci i tuoi dati per permetterci di contattarti</p>
-      </div>
+      <h2 className="text-xl font-bold mb-4">Informazioni Personali</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          label="Nome"
+      <div>
+        <Label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+          Nome *
+        </Label>
+        <Input
+          type="text"
+          id="firstName"
           name="firstName"
-          type="text"
+          required
           value={formData.firstName}
-          onChange={handleChange}
+          onChange={(e) => onUpdate('firstName', e.target.value)}
+          className="w-full"
           placeholder="Inserisci il tuo nome"
-          required
         />
-        
-        <FormField
-          label="Cognome"
+      </div>
+
+      <div>
+        <Label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+          Cognome *
+        </Label>
+        <Input
+          type="text"
+          id="lastName"
           name="lastName"
-          type="text"
+          required
           value={formData.lastName}
-          onChange={handleChange}
+          onChange={(e) => onUpdate('lastName', e.target.value)}
+          className="w-full"
           placeholder="Inserisci il tuo cognome"
-          required
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          label="Email"
-          name="email"
+      <div>
+        <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          Email *
+        </Label>
+        <Input
           type="email"
+          id="email"
+          name="email"
+          required
           value={formData.email}
-          onChange={handleChange}
-          placeholder="esempio@email.com"
-          required
+          onChange={(e) => onUpdate('email', e.target.value)}
+          className="w-full"
+          placeholder="nome@esempio.com"
         />
-        
-        <FormField
-          label="Telefono"
-          name="phone"
+      </div>
+
+      <div>
+        <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+          Telefono *
+        </Label>
+        <Input
           type="tel"
+          id="phone"
+          name="phone"
+          required
           value={formData.phone}
-          onChange={handleChange}
+          onChange={(e) => onUpdate('phone', e.target.value)}
+          className="w-full"
           placeholder="+39 123 456 7890"
-          required
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        <FormField
-          label="Nome azienda"
-          name="companyName"
+      <div>
+        <Label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+          Ruolo *
+        </Label>
+        <Input
           type="text"
-          value={formData.companyName}
-          onChange={handleChange}
-          placeholder="Inserisci il nome della tua azienda"
+          id="role"
+          name="role"
           required
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6">
-        <FormField
-          label="Indirizzo"
-          name="address"
-          type="text"
-          value={formData.address}
-          onChange={handleChange}
-          placeholder="Via/Piazza, numero civico"
-          required
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FormField
-          label="Città"
-          name="city"
-          type="text"
-          value={formData.city}
-          onChange={handleChange}
-          placeholder="Città"
-          required
-        />
-        
-        <FormField
-          label="Provincia"
-          name="province"
-          type="text"
-          value={formData.province}
-          onChange={handleChange}
-          placeholder="Provincia"
-          required
-        />
-        
-        <FormField
-          label="CAP"
-          name="zipCode"
-          type="text"
-          value={formData.zipCode}
-          onChange={handleChange}
-          placeholder="CAP"
-          required
+          value={formData.role}
+          onChange={(e) => onUpdate('role', e.target.value)}
+          className="w-full"
+          placeholder="Es. Imprenditore, Collaboratore, etc."
         />
       </div>
     </div>
   );
-} 
+}

@@ -29,113 +29,30 @@ const documentValidations: DocumentValidation[] = [
   }
 ];
 
-export const validateCompanyInfo = (formData: Pick<FormState, 'companyName' | 'vatNumber' | 'atecoCode' | 'companySize'>): string[] => {
-  const errors: string[] = [];
-  
-  if (!formData.companyName) errors.push('Ragione sociale è obbligatoria');
-  if (!formData.vatNumber) errors.push('Partita IVA è obbligatoria');
-  if (!formData.atecoCode) errors.push('Codice ATECO è obbligatorio');
-  if (!formData.companySize) errors.push('Dimensione azienda è obbligatoria');
-
-  return errors;
-};
-
-export const validateRequirements = (requirements: FormState['requirements']): string[] => {
-  const errors: string[] = [];
-  
-  if (!requirements.businessRegistry) errors.push('Iscrizione al registro imprese è obbligatoria');
-  if (!requirements.sicilianLocation) errors.push('Sede in Sicilia è obbligatoria');
-  if (!requirements.buildingCompliance) errors.push('Conformità edilizia è obbligatoria');
-  if (!requirements.financialCapacity) errors.push('Capacità finanziaria è obbligatoria');
-  if (!requirements.contributionRegularity) errors.push('Regolarità contributiva è obbligatoria');
-
-  return errors;
-};
-
-export const validateProjectDetails = (formData: Pick<FormState, 'projectType' | 'projectDescription' | 'projectLocation' | 'projectDuration'>): string[] => {
-  const errors: string[] = [];
-
-  if (!formData.projectType) errors.push('Tipologia progetto è obbligatoria');
-  if (!formData.projectDescription) errors.push('Descrizione progetto è obbligatoria');
-  if (!formData.projectLocation) errors.push('Ubicazione progetto è obbligatoria');
-  if (!formData.projectDuration) errors.push('Durata progetto è obbligatoria');
-
-  return errors;
-};
-
-export const validateExpenses = (expenses: Record<string, number>, totalAmount: number): string[] => {
-  const errors: string[] = [];
-
-  if (Object.keys(expenses).length === 0) {
-    errors.push('È necessario inserire almeno una spesa');
-  }
-
-  if (totalAmount <= 0) {
-    errors.push('Il totale delle spese deve essere maggiore di zero');
-  }
-
-  if (totalAmount > 1000000) {
-    errors.push('Il totale delle spese non può superare 1.000.000€');
-  }
-
-  return errors;
-};
-
-export const validateFundingAmount = (amount: number, regimeType: RegimeType): string[] => {
-  const errors: string[] = [];
-
-  if (amount <= 0) {
-    errors.push('L\'importo del finanziamento deve essere maggiore di zero');
-  }
-
-  if (regimeType === 'deMinimis' && amount > 200000) {
-    errors.push('In regime de minimis il finanziamento non può superare 200.000€');
-  }
-
-  return errors;
-};
-
-export const validateDocuments = (
-  documents: FormState['documents'],
-  regimeType: RegimeType
-): string[] => {
-  const errors: string[] = [];
-
-  documentValidations.forEach((validation) => {
-    const isRequired = typeof validation.required === 'function'
-      ? validation.required(regimeType)
-      : validation.required;
-
-    if (isRequired && !documents[validation.id]) {
-      errors.push(`${validation.label} è obbligatorio`);
-    }
-  });
-
-  return errors;
-};
-
 export const validateStep = (step: number, formData: FormState): string[] => {
   const errors: string[] = [];
 
   switch (step) {
-    case 0: // Company Info
-      errors.push(...validateCompanyInfo(formData));
+    case 0: // Personal Info
+      if (!formData.firstName) errors.push('Il nome è obbligatorio');
+      if (!formData.lastName) errors.push('Il cognome è obbligatorio');
+      if (!formData.email) errors.push('L\'email è obbligatoria');
+      if (!formData.phone) errors.push('Il telefono è obbligatorio');
       break;
 
-    case 1: // Requirements
-      errors.push(...validateRequirements(formData.requirements));
+    case 1: // Project Details
+      if (!formData.projectTitle) errors.push('Il titolo del progetto è obbligatorio');
+      if (!formData.projectDescription) errors.push('La descrizione del progetto è obbligatoria');
+      if (!formData.projectStartDate) errors.push('La data di inizio è obbligatoria');
+      if (!formData.projectEndDate) errors.push('La data di fine è obbligatoria');
+      if (!formData.totalAmount) errors.push('L\'importo totale è obbligatorio');
       break;
 
-    case 2: // Project Details
-      errors.push(...validateProjectDetails(formData));
-      break;
-
-    case 3: // Budget
-      errors.push(...validateExpenses(formData.expenses, formData.totalAmount));
-      break;
-
-    case 4: // Documents
-      errors.push(...validateDocuments(formData.documents, formData.regimeType));
+    case 2: // Budget
+      if (formData.equipmentCosts < 0) errors.push('I costi per attrezzature non possono essere negativi');
+      if (formData.consultingCosts < 0) errors.push('I costi di consulenza non possono essere negativi');
+      if (formData.trainingCosts < 0) errors.push('I costi di formazione non possono essere negativi');
+      if (formData.marketingCosts < 0) errors.push('I costi di marketing non possono essere negativi');
       break;
 
     default:
@@ -146,14 +63,10 @@ export const validateStep = (step: number, formData: FormState): string[] => {
 };
 
 export const canSubmitForm = (formData: FormState): boolean => {
-  const allValidations = [
-    ...validateCompanyInfo(formData),
-    ...validateRequirements(formData.requirements),
-    ...validateProjectDetails(formData),
-    ...validateExpenses(formData.expenses, formData.totalAmount),
-    ...validateDocuments(formData.documents, formData.regimeType),
-    ...validateFundingAmount(formData.fundingAmount, formData.regimeType)
-  ];
+  const allValidations = validateStep(0, formData).concat(
+    validateStep(1, formData),
+    validateStep(2, formData)
+  );
 
-  return allValidations.length === 0 && formData.gdprConsent;
+  return allValidations.length === 0;
 };
