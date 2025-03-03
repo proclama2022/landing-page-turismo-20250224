@@ -23,6 +23,20 @@ export default function FinalStep({ formData, updateFormData, score }: FinalStep
   const ivaAmount = investmentAmount * 0.22; // 22% IVA
   const totalPersonalFunds = personalAmount + ivaAmount; // Totale fondi necessari
 
+  // Funzione per ottenere il testo del canale di scoperta
+  const getDiscoveryChannelText = (channel: string) => {
+    switch (channel) {
+      case 'social': return 'Social Media';
+      case 'search': return 'Motori di ricerca';
+      case 'friend': return 'Passaparola';
+      case 'event': return 'Eventi o fiere';
+      case 'email': return 'Email marketing';
+      case 'advertisement': return 'Pubblicità';
+      case 'other': return 'Altro';
+      default: return 'Non specificato';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">Conferma</h2>
@@ -86,6 +100,24 @@ export default function FinalStep({ formData, updateFormData, score }: FinalStep
               L'IVA è considerata al 22% su tutto il valore dell'investimento come aliquota massima, solo a scopo illustrativo. 
               Le percentuali effettive potrebbero variare in base alle specifiche del bando e alla tipologia di spese ammissibili.
               Si consiglia di consultare un professionista per una valutazione accurata.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Informazioni aggiuntive */}
+      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Informazioni aggiuntive</h3>
+        
+        <div className="space-y-4">
+          <div className="bg-gray-50 p-4 rounded-md">
+            <p className="text-sm text-gray-500">Come ci hai conosciuto</p>
+            <p className="text-lg font-semibold">{getDiscoveryChannelText(formData.discoveryChannel)}</p>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+            <p className="text-sm text-gray-600">
+              Grazie per averci fatto sapere come ci hai conosciuto. Queste informazioni ci aiutano a migliorare i nostri servizi e a raggiungere più persone interessate ai bandi per il turismo.
             </p>
           </div>
         </div>

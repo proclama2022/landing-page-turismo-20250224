@@ -65,6 +65,31 @@ export default function PersonalInfoStep({ formData, updateFormData }: PersonalI
           required
         />
       </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        <div className="form-field">
+          <label htmlFor="discoveryChannel" className="block text-sm font-medium text-gray-700 mb-1">
+            Come ci hai conosciuto? <span className="text-red-500">*</span>
+          </label>
+          <select
+            id="discoveryChannel"
+            name="discoveryChannel"
+            value={formData.discoveryChannel}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+            required
+          >
+            <option value="" disabled>Seleziona un'opzione</option>
+            <option value="social">Social Media</option>
+            <option value="search">Motori di ricerca</option>
+            <option value="friend">Passaparola</option>
+            <option value="event">Eventi o fiere</option>
+            <option value="email">Email marketing</option>
+            <option value="advertisement">Pubblicità</option>
+            <option value="other">Altro</option>
+          </select>
+        </div>
+      </div>
     </div>
   );
 }
