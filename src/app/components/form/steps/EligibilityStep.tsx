@@ -12,14 +12,13 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     const eligibility = formData.eligibility || {
-      isRegistered: false,
-      hasClassificationRequirements: false,
+      isRegisteredOrWillBe: false,
       hadGrantRevocation: false,
       hasRelocated24Months: false,
       willNotRelocate24Months: false,
-      isPartOfGroup: false
+      isPartOfGroup: false,
     };
-    
+
     updateFormData({
       eligibility: {
         ...eligibility,
@@ -29,12 +28,11 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
   };
 
   const eligibility = formData.eligibility || {
-    isRegistered: false,
-    hasClassificationRequirements: false,
+    isRegisteredOrWillBe: false,
     hadGrantRevocation: false,
     hasRelocated24Months: false,
     willNotRelocate24Months: false,
-    isPartOfGroup: false
+    isPartOfGroup: false,
   };
 
   return (
@@ -43,24 +41,15 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
       <div className="flex items-center">
         <input
           type="checkbox"
-          id="isRegistered"
-          name="isRegistered"
-          checked={eligibility.isRegistered}
+          id="isRegisteredOrWillBe"
+          name="isRegisteredOrWillBe"
+          checked={formData.eligibility?.isRegisteredOrWillBe || false}
           onChange={handleChange}
           className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="isRegistered" className="ml-2 text-sm text-gray-700">L'impresa è regolarmente costituita e iscritta al registro imprese</label>
-      </div>
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="hasClassificationRequirements"
-          name="hasClassificationRequirements"
-          checked={eligibility.hasClassificationRequirements}
-          onChange={handleChange}
-          className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
-        />
-        <label htmlFor="hasClassificationRequirements"  className="ml-2 text-sm text-gray-700">L'impresa possiede i requisiti di classificazione</label>
+        <label htmlFor="isRegisteredOrWillBe" className="ml-2 text-sm text-gray-700">
+          L'impresa è già costituita e iscritta al registro imprese o sarà costituita prima della presentazione della domanda
+        </label>
       </div>
       <div className="flex items-center">
         <input
@@ -71,7 +60,7 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
           onChange={handleChange}
           className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="hadGrantRevocation"  className="ml-2 text-sm text-gray-700">L'impresa non ha subito revoca di agevolazioni</label>
+        <label htmlFor="hadGrantRevocation" className="ml-2 text-sm text-gray-700">L'impresa non ha subito revoca di agevolazioni</label>
       </div>
       <div className="flex items-center">
         <input
@@ -82,7 +71,7 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
           onChange={handleChange}
           className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="hasRelocated24Months"  className="ml-2 text-sm text-gray-700">L'impresa non ha delocalizzato negli ultimi 24 mesi</label>
+        <label htmlFor="hasRelocated24Months" className="ml-2 text-sm text-gray-700">L'impresa non ha delocalizzato negli ultimi 24 mesi</label>
       </div>
       <div className="flex items-center">
         <input
@@ -93,7 +82,7 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
           onChange={handleChange}
           className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="willNotRelocate24Months"  className="ml-2 text-sm text-gray-700">L'impresa non delocalizzerà nei prossimi 24 mesi</label>
+        <label htmlFor="willNotRelocate24Months" className="ml-2 text-sm text-gray-700">L'impresa non delocalizzerà nei prossimi 24 mesi</label>
       </div>
       <div className="flex items-center">
         <input
@@ -104,7 +93,7 @@ export default function EligibilityStep({ formData, updateFormData }: Eligibilit
           onChange={handleChange}
           className="w-4 h-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="isPartOfGroup"  className="ml-2 text-sm text-gray-700">L'impresa non fa parte di un gruppo</label>
+        <label htmlFor="isPartOfGroup" className="ml-2 text-sm text-gray-700">L'impresa non fa parte di un gruppo</label>
       </div>
     </div>
   );

@@ -45,14 +45,36 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     return 'text-red-600';
   };
 
+  const getScoreBadge = (score: number) => {
+    if (score >= 6) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          {score} punti - Massimo
+        </span>
+      );
+    } else if (score >= 3) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          {score} punti - Medio
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          {score} punti - Base
+        </span>
+      );
+    }
+  };
+
   return (
     <div className="relative">
       <div className="mb-1">
-        <label className="block text-sm font-medium text-gray-700">
-          Città dell'intervento
+        <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+          Città dell'intervento *
         </label>
       </div>
-      
+
       <div className="mt-1 relative">
         <button
           type="button"
@@ -64,13 +86,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           {selectedCity ? (
             <div className="flex items-center justify-between">
               <span className="block truncate font-medium">{selectedCity.name}</span>
-              <span className={`${getScoreColor(selectedCity.score)} font-semibold`}>
-                {selectedCity.score} punti
-              </span>
+              {getScoreBadge(selectedCity.score)}
             </div>
           ) : (
             <span className="block truncate text-gray-500">
-              Seleziona una città per vedere il punteggio
+              Seleziona una città
             </span>
           )}
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -90,11 +110,22 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 value={searchQuery}
                 onChange={handleSearch}
               />
+              <div className="mt-2 flex space-x-2 text-xs">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                  6 punti
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">
+                  3 punti
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+                  0 punti
+                </span>
+              </div>
             </div>
 
             {Object.entries(filteredCities).map(([province, provinceCities]) => (
               <div key={province}>
-                <div className="sticky top-14 bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                <div className="sticky top-24 bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
                   Provincia di {province}
                 </div>
                 {provinceCities.map(city => (
@@ -110,9 +141,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{city.name}</span>
-                      <span className={`${getScoreColor(city.score)} font-semibold`}>
-                        {city.score} punti
-                      </span>
+                      {getScoreBadge(city.score)}
                     </div>
                   </div>
                 ))}
@@ -133,4 +162,4 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       )}
     </div>
   );
-} 
+}

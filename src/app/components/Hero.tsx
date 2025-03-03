@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import AnimatedButton from './ui/AnimatedButton';
 import FormModal from './form/FormModal';
 import AnimatedSection from './ui/AnimatedSection';
+import AnimatedButton from './ui/AnimatedButton';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -11,7 +11,7 @@ export default function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = async () => setIsModalOpen(false);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <section className="relative bg-black overflow-hidden">
@@ -33,7 +33,7 @@ export default function Hero() {
           />
         </motion.div>
       </div>
-
+      
       <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <AnimatedSection direction="left">

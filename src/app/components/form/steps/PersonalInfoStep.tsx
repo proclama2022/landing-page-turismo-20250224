@@ -1,92 +1,68 @@
 'use client';
 
 import React from 'react';
-import { BaseStepProps } from '@/types/components';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { FormState } from '@/types/form';
+import FormField from '../FormField';
 
-export default function PersonalInfoStep({ formData, onUpdate }: BaseStepProps) {
+interface PersonalInfoStepProps {
+  formData: FormState;
+  updateFormData: (updates: Partial<FormState>) => void;
+}
+
+export default function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    updateFormData({ [name]: value });
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold mb-4">Informazioni Personali</h2>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">Informazioni personali</h2>
+        <p className="text-sm text-gray-500">Inserisci i tuoi dati per permetterci di contattarti</p>
+      </div>
 
-      <div>
-        <Label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-          Nome *
-        </Label>
-        <Input
-          type="text"
-          id="firstName"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          label="Nome"
           name="firstName"
-          required
+          type="text"
           value={formData.firstName}
-          onChange={(e) => onUpdate('firstName', e.target.value)}
-          className="w-full"
+          onChange={handleChange}
           placeholder="Inserisci il tuo nome"
+          required
         />
-      </div>
-
-      <div>
-        <Label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-          Cognome *
-        </Label>
-        <Input
-          type="text"
-          id="lastName"
+        
+        <FormField
+          label="Cognome"
           name="lastName"
-          required
-          value={formData.lastName}
-          onChange={(e) => onUpdate('lastName', e.target.value)}
-          className="w-full"
-          placeholder="Inserisci il tuo cognome"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email *
-        </Label>
-        <Input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={formData.email}
-          onChange={(e) => onUpdate('email', e.target.value)}
-          className="w-full"
-          placeholder="nome@esempio.com"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-          Telefono *
-        </Label>
-        <Input
-          type="tel"
-          id="phone"
-          name="phone"
-          required
-          value={formData.phone}
-          onChange={(e) => onUpdate('phone', e.target.value)}
-          className="w-full"
-          placeholder="+39 123 456 7890"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-          Ruolo *
-        </Label>
-        <Input
           type="text"
-          id="role"
-          name="role"
+          value={formData.lastName}
+          onChange={handleChange}
+          placeholder="Inserisci il tuo cognome"
           required
-          value={formData.role}
-          onChange={(e) => onUpdate('role', e.target.value)}
-          className="w-full"
-          placeholder="Es. Imprenditore, Collaboratore, etc."
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          label="Email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="esempio@email.com"
+          required
+        />
+        
+        <FormField
+          label="Telefono"
+          name="phone"
+          type="tel"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="+39 123 456 7890"
+          required
         />
       </div>
     </div>
