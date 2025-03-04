@@ -26,7 +26,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
 
   // Chiudi il dropdown quando si clicca fuori
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
           buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -34,8 +34,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
     
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside); // Aggiunto evento touch per dispositivi mobili
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [dropdownRef, buttonRef]);
 
@@ -101,6 +104,39 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
+  // Calcola la posizione del dropdown
+  const getDropdownPosition = () => {
+    if (!buttonRef.current || !containerRef.current) return {};
+    
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
+    
+    // Su mobile, posiziona il dropdown in modo che occupi tutta la larghezza disponibile
+    const isMobile = window.innerWidth < 768;
+    
+    if (isMobile) {
+      return {
+        position: 'fixed' as const,
+        top: buttonRect.bottom + window.scrollY + 8,
+        left: 16, // Margine fisso dai bordi dello schermo
+        right: 16,
+        width: 'auto',
+        maxHeight: '50vh', // Limita l'altezza al 50% della viewport su mobile
+        zIndex: 9999
+      };
+    }
+    
+    // Su desktop, mantieni il comportamento attuale
+    return {
+      position: 'absolute' as const,
+      top: buttonRect.height + 8,
+      left: 0,
+      width: containerRect.width,
+      maxHeight: '400px',
+      zIndex: 50
+    };
+  };
+
   return (
     <div className="relative" ref={containerRef}>
       <button
@@ -110,6 +146,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           error ? 'border-red-500' : 'border-gray-300'
         } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 hover:border-blue-400 ${isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
+        onTouchEnd={(e) => {
+          e.preventDefault(); // Previene comportamenti indesiderati su touch
+          setIsOpen(!isOpen);
+        }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -147,12 +187,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className="fixed z-50 bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className="bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
           style={{
-            top: buttonRef.current ? buttonRef.current.getBoundingClientRect().bottom + window.scrollY + 8 : 0,
-            left: containerRef.current ? containerRef.current.getBoundingClientRect().left : 0,
-            width: containerRef.current ? containerRef.current.offsetWidth : 'auto',
-            maxHeight: '400px',
+            ...getDropdownPosition(),
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
             animationDuration: '0.2s'
           }}
@@ -187,6 +224,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     value === city.name ? 'bg-blue-100' : ''
                   }`}
                   onClick={() => {
+                    onChange(city.name);
+                    setIsOpen(false);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault(); // Previene comportamenti indesiderati su touch
                     onChange(city.name);
                     setIsOpen(false);
                   }}
