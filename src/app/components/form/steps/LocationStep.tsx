@@ -4,7 +4,6 @@ import React from 'react';
 import { FormState } from '@/types/form';
 import CitySelect from '../CitySelect';
 import { cities, City } from '@/app/data/cityData';
-import FormField from '../FormField';
 
 interface LocationStepProps {
   formData: FormState;
@@ -45,64 +44,57 @@ export default function LocationStep({ formData, updateFormData }: LocationStepP
   const selectedCity = localUnit.municipality ? cities.find((city: City) => city.name === localUnit.municipality) : null;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-bold mb-4">Unità Locale</h2>
-
-      <div>
-        <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">
-          Comune dell'intervento *
-        </label>
-        <CitySelect
-          value={localUnit.municipality}
-          onChange={handleCitySelect}
-          error={undefined}
-        />
-      </div>
-
-      {selectedCity && (
-        <div className="mt-4 p-4 rounded-lg border">
-          {selectedCity.score >= 6 ? (
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <h3 className="text-green-700 font-semibold text-lg mb-2">Ottima scelta! Punteggio massimo: {selectedCity.score} punti</h3>
-              <p className="text-green-600">
-                Hai selezionato un comune che ti garantisce il massimo punteggio per l'area dell'intervento. 
-                Questo ti dà un vantaggio significativo nella valutazione complessiva del tuo progetto.
-              </p>
-            </div>
-          ) : selectedCity.score >= 3 ? (
-            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-              <h3 className="text-yellow-700 font-semibold text-lg mb-2">Buona scelta: {selectedCity.score} punti</h3>
-              <p className="text-yellow-600">
-                Hai selezionato un comune che ti garantisce un buon punteggio per l'area dell'intervento. 
-                Per massimizzare le tue possibilità, considera di rafforzare altri aspetti del progetto, come la sostenibilità ambientale.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h3 className="text-blue-700 font-semibold text-lg mb-2">Punteggio base: {selectedCity.score} punti</h3>
-              <p className="text-blue-600">
-                Non scoraggiarti! Anche se il punteggio per questa località è basso, puoi compensare con altri criteri del bando. 
-                Ti consigliamo di concentrarti sugli aspetti legati alla sostenibilità ambientale (ogni opzione vale +2 punti) 
-                e sugli indicatori finanziari per aumentare il tuo punteggio complessivo.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {!selectedCity && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-gray-700 font-semibold text-lg mb-2">Informazioni sul punteggio</h3>
-          <p className="text-gray-600">
-            La scelta del comune influisce sul punteggio del tuo progetto. I comuni sono classificati in base a tre livelli di punteggio:
+    <div className="space-y-6 animate__animated animate__fadeIn">
+      <h2 className="text-xl font-bold mb-6 animate__animated animate__fadeIn">Unità locale</h2>
+      
+      <div className="mb-6">
+        <div className="mb-4">
+          <label htmlFor="municipality" className="block text-base font-medium text-gray-700 mb-2">
+            Comune dell'intervento <span className="text-red-500">*</span>
+          </label>
+          <p className="text-sm text-gray-500 mb-4">
+            Seleziona il comune in cui realizzerai il tuo progetto. Ricorda che alcuni comuni possono garantire un punteggio più alto.
           </p>
-          <ul className="mt-2 space-y-1 text-gray-600 list-disc pl-5">
-            <li><span className="text-green-600 font-medium">6 punti</span>: Comuni in aree rurali, isole minori o aree con maggiore marginalità</li>
-            <li><span className="text-yellow-600 font-medium">3 punti</span>: Comuni in aree con media marginalità</li>
-            <li><span className="text-red-600 font-medium">0 punti</span>: Comuni in aree urbane o turistiche già sviluppate</li>
-          </ul>
         </div>
-      )}
+        
+        <div className="relative z-30">
+          <CitySelect
+            value={localUnit.municipality}
+            onChange={handleCitySelect}
+            error={undefined}
+          />
+        </div>
+        
+        <div className="mt-3 flex items-center space-x-3">
+          <div className="flex items-center">
+            <svg className="w-4 h-4 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span className="text-xs text-gray-700">6 punti - Ottimo</span>
+          </div>
+          <div className="flex items-center">
+            <svg className="w-4 h-4 text-yellow-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <span className="text-xs text-gray-700">3 punti - Medio</span>
+          </div>
+          <div className="flex items-center">
+            <svg className="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            <span className="text-xs text-gray-700">0 punti - Basso</span>
+          </div>
+        </div>
+        
+        <div className="mt-3">
+          <div className="flex items-center text-blue-600">
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span className="text-sm">La scelta del comune influisce sul punteggio del tuo progetto</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 } 

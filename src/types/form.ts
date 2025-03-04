@@ -144,6 +144,9 @@ export interface FormState {
   projectType: string;
   projectLocation?: string;
   projectDuration?: string;
+  newPersonnel?: boolean;
+  degradedBuilding?: boolean;
+  historicalBuilding?: boolean;
   
   // Budget
   expenses: Record<string, number>;
@@ -204,6 +207,9 @@ export const DEFAULT_FORM_STATE: FormState = {
   projectType: 'expansion',
   projectLocation: '',
   projectDuration: '',
+  newPersonnel: false,
+  degradedBuilding: false,
+  historicalBuilding: false,
   expenses: {},
   totalAmount: 0,
   fundingAmount: 0,

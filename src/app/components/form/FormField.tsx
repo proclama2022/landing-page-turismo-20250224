@@ -105,11 +105,12 @@ const FormField: React.FC<FormFieldProps> = ({
               onChange={onChange}
               required={required}
               disabled={disabled}
-              className={`${baseInputClasses} appearance-none pr-10`}
+              className={`${baseInputClasses} appearance-none pr-10 text-gray-900`}
+              style={{ color: '#1f2937' }}
             >
-              <option value="">{placeholder || 'Seleziona un\'opzione'}</option>
+              <option value="" style={{ color: '#6b7280' }}>{placeholder || 'Seleziona un\'opzione'}</option>
               {options?.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value} style={{ color: '#1f2937' }}>
                   {option.label}
                 </option>
               ))}
