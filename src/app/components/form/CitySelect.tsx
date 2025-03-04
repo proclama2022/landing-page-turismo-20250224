@@ -57,6 +57,50 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
 
   const selectedCity = cities.find(city => city.name === value);
 
+  // Funzione per ottenere il messaggio motivazionale in base al punteggio
+  const getScoreMessage = (score: number) => {
+    if (score >= 6) {
+      return (
+        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md animate__animated animate__fadeIn">
+          <p className="text-sm text-green-700 font-medium flex items-center">
+            <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>
+              <strong>Complimenti!</strong> Hai selezionato un comune con punteggio massimo (6 punti). Questo ti offre ottime possibilità di successo per il tuo progetto.
+            </span>
+          </p>
+        </div>
+      );
+    } else if (score >= 3) {
+      return (
+        <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md animate__animated animate__fadeIn">
+          <p className="text-sm text-yellow-700 font-medium flex items-center">
+            <svg className="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <span>
+              <strong>Buona scelta!</strong> Questo comune ha un punteggio medio (3 punti). Considera di rafforzare altri aspetti del tuo progetto per aumentare le possibilità di successo.
+            </span>
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md animate__animated animate__fadeIn">
+          <p className="text-sm text-red-700 font-medium flex items-center">
+            <svg className="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>
+              <strong>Attenzione!</strong> Questo comune non offre punti aggiuntivi. Ti consigliamo di rafforzare altri aspetti del tuo progetto per aumentare le possibilità di successo.
+            </span>
+          </p>
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="relative" ref={containerRef}>
       <button
@@ -97,6 +141,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
         </p>
       </div>
 
+      {/* Messaggio basato sul punteggio del comune selezionato */}
+      {selectedCity && getScoreMessage(selectedCity.score)}
+
       {isOpen && (
         <div 
           ref={dropdownRef}
@@ -111,6 +158,13 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           }}
         >
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
+            {/* Ripristino del messaggio motivazionale all'interno del dropdown */}
+            <div className="mb-2 text-sm font-medium text-blue-600 animate__animated animate__fadeIn">
+              <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              La scelta del comune influisce sul punteggio del tuo progetto
+            </div>
             <input
               type="search"
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
@@ -123,7 +177,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
 
           {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
             <div key={province}>
-              <div className="sticky top-[48px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+              <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
                 Provincia di {province}
               </div>
               {provinceCities.map((city) => (
