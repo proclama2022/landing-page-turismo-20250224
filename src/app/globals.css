@@ -377,3 +377,105 @@ input[type="number"] {
 .highlight-section {
   animation: highlight-section 2s ease-out forwards;
 }
+
+/* Miglioramenti per dispositivi mobili */
+@media (max-width: 768px) {
+  /* Aumenta la dimensione dei pulsanti e degli input per facilitare il tocco */
+  button, 
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important; /* Previene lo zoom automatico su iOS */
+    min-height: 44px; /* Dimensione minima raccomandata per target touch */
+  }
+
+  /* Migliora la spaziatura nei form */
+  .form-step {
+    padding: 1rem !important;
+  }
+
+  /* Ottimizza i dropdown per mobile */
+  .dropdown-content {
+    -webkit-overflow-scrolling: touch; /* Scroll fluido su iOS */
+  }
+
+  /* Migliora la visualizzazione delle liste nei dropdown */
+  .dropdown-item {
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Previene problemi di overflow */
+  .overflow-fix {
+    overflow-x: hidden;
+  }
+
+  /* Previene lo spostamento laterale del contenuto */
+  body, html {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Migliora la visualizzazione delle modali */
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Migliora la visualizzazione dei form su mobile */
+  .form-container {
+    width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Previene problemi di layout con elementi fixed */
+  .fixed-element {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
+/* Animazioni più fluide */
+.animate__animated {
+  animation-duration: 0.3s !important;
+}
+
+/* Migliora la reattività dei tocchi */
+@media (hover: none) {
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Migliora lo scrolling */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Previene lo spostamento laterale del contenuto */
+.prevent-overflow {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Migliora la visualizzazione dei dropdown */
+.dropdown-wrapper {
+  position: relative;
+  z-index: 50;
+}
+
+.dropdown-content {
+  transform: translateZ(0); /* Forza l'accelerazione hardware */
+  backface-visibility: hidden; /* Migliora le performance */
+  will-change: transform; /* Ottimizza le animazioni */
+}

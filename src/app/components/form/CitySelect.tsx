@@ -14,6 +14,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Ordina le città per provincia e poi per nome
@@ -42,6 +43,13 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     };
   }, [dropdownRef, buttonRef]);
 
+  // Reset della query di ricerca quando si chiude il dropdown
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('');
+    }
+  }, [isOpen]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -66,7 +74,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       return (
         <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md animate__animated animate__fadeIn">
           <p className="text-sm text-green-700 font-medium flex items-center">
-            <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-5 h-5 mr-2 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span>
@@ -79,7 +87,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       return (
         <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md animate__animated animate__fadeIn">
           <p className="text-sm text-yellow-700 font-medium flex items-center">
-            <svg className="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-5 h-5 mr-2 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
             <span>
@@ -92,7 +100,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       return (
         <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md animate__animated animate__fadeIn">
           <p className="text-sm text-red-700 font-medium flex items-center">
-            <svg className="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-5 h-5 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span>
@@ -109,20 +117,20 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     if (!buttonRef.current || !containerRef.current) return {};
     
     const buttonRect = buttonRef.current.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
-    
-    // Su mobile, posiziona il dropdown in modo che occupi tutta la larghezza disponibile
     const isMobile = window.innerWidth < 768;
     
     if (isMobile) {
       return {
         position: 'fixed' as const,
         top: buttonRect.bottom + window.scrollY + 8,
-        left: 16, // Margine fisso dai bordi dello schermo
-        right: 16,
-        width: 'auto',
-        maxHeight: '50vh', // Limita l'altezza al 50% della viewport su mobile
-        zIndex: 9999
+        left: 0,
+        right: 0,
+        width: '100%',
+        maxHeight: '60vh',
+        zIndex: 9999,
+        padding: '0 16px',
+        boxSizing: 'border-box' as const,
+        transform: 'translateX(0)', // Previene lo spostamento laterale
       };
     }
     
@@ -131,25 +139,29 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       position: 'absolute' as const,
       top: buttonRect.height + 8,
       left: 0,
-      width: containerRect.width,
+      width: '100%',
       maxHeight: '400px',
       zIndex: 50
     };
   };
 
+  // Gestisce l'apertura del dropdown senza focus automatico sull'input
+  const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative overflow-hidden" ref={containerRef}>
       <button
         ref={buttonRef}
         type="button"
         className={`relative w-full bg-white border ${
           error ? 'border-red-500' : 'border-gray-300'
         } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 hover:border-blue-400 ${isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        onTouchEnd={(e) => {
-          e.preventDefault(); // Previene comportamenti indesiderati su touch
-          setIsOpen(!isOpen);
-        }}
+        onClick={handleDropdownToggle}
+        onTouchEnd={handleDropdownToggle}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -174,10 +186,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {/* Messaggio motivazionale sempre visibile */}
       <div className="mt-2 mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md animate__animated animate__fadeIn">
         <p className="text-xs text-blue-700 font-medium flex items-center">
-          <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-4 h-4 inline-block mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          La scelta del comune influisce sul punteggio del tuo progetto
+          <span>La scelta del comune influisce sul punteggio del tuo progetto</span>
         </p>
       </div>
 
@@ -187,7 +199,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className="bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className="bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-hidden focus:outline-none sm:text-sm animate__animated animate__fadeIn"
           style={{
             ...getDropdownPosition(),
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
@@ -197,64 +209,93 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
             {/* Ripristino del messaggio motivazionale all'interno del dropdown */}
             <div className="mb-2 text-sm font-medium text-blue-600 animate__animated animate__fadeIn">
-              <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5 inline-block mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               La scelta del comune influisce sul punteggio del tuo progetto
             </div>
-            <input
-              type="search"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-              placeholder="Cerca città..."
-              value={searchQuery}
-              onChange={handleSearch}
-              autoFocus
-            />
-          </div>
-
-          {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
-            <div key={province}>
-              <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
-                Provincia di {province}
-              </div>
-              {provinceCities.map((city) => (
-                <div
-                  key={`${city.province}-${city.name}`}
-                  className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 transition-colors duration-150 ${
-                    value === city.name ? 'bg-blue-100' : ''
-                  }`}
-                  onClick={() => {
-                    onChange(city.name);
-                    setIsOpen(false);
-                  }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault(); // Previene comportamenti indesiderati su touch
-                    onChange(city.name);
-                    setIsOpen(false);
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type="search"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                placeholder="Cerca città..."
+                value={searchQuery}
+                onChange={handleSearch}
+                onClick={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                autoCapitalize="off"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSearchQuery('');
+                    inputRef.current?.focus();
                   }}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className={`block truncate ${value === city.name ? 'font-medium' : 'font-normal'}`}>
-                      {city.name}
-                    </span>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                      city.score >= 6 ? 'bg-green-100 text-green-800' : 
-                      city.score >= 3 ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {city.score} punti
-                    </span>
-                  </div>
-                </div>
-              ))}
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              )}
             </div>
-          ))}
+          </div>
 
-          {Object.keys(filteredCities).length === 0 && (
-            <div className="text-center py-4 text-sm text-gray-500">
-              Nessuna città trovata
-            </div>
-          )}
+          <div className="overflow-y-auto" style={{ maxHeight: 'calc(60vh - 80px)' }}>
+            {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
+              <div key={province}>
+                <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+                  Provincia di {province}
+                </div>
+                {provinceCities.map((city) => (
+                  <div
+                    key={`${city.province}-${city.name}`}
+                    className={`cursor-pointer select-none relative py-3 pl-3 pr-9 hover:bg-blue-50 transition-colors duration-150 ${
+                      value === city.name ? 'bg-blue-100' : ''
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onChange(city.name);
+                      setIsOpen(false);
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onChange(city.name);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className={`block truncate ${value === city.name ? 'font-medium' : 'font-normal'}`}>
+                        {city.name}
+                      </span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        city.score >= 6 ? 'bg-green-100 text-green-800' : 
+                        city.score >= 3 ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {city.score} punti
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            {Object.keys(filteredCities).length === 0 && (
+              <div className="text-center py-4 text-sm text-gray-500">
+                Nessuna città trovata
+              </div>
+            )}
+          </div>
         </div>
       )}
       

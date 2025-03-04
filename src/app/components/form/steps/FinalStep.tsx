@@ -22,6 +22,12 @@ export default function FinalStep({ formData, updateFormData, score }: FinalStep
   const personalAmount = investmentAmount * 0.2; // 20% a carico del richiedente
   const ivaAmount = investmentAmount * 0.22; // 22% IVA
   const totalPersonalFunds = personalAmount + ivaAmount; // Totale fondi necessari
+  
+  // Costante per il limite massimo di investimento per il contributo pieno
+  const MAX_INVESTMENT_FOR_FULL_CONTRIBUTION = 375000; // 300.000 / 0.8 = 375.000 (considerando l'80% di contributo)
+  
+  // Verifica se l'investimento supera il massimo per il contributo pieno
+  const isOverMaxInvestment = investmentAmount > MAX_INVESTMENT_FOR_FULL_CONTRIBUTION;
 
   // Funzione per ottenere il testo del canale di scoperta
   const getDiscoveryChannelText = (channel: string) => {
@@ -47,6 +53,30 @@ export default function FinalStep({ formData, updateFormData, score }: FinalStep
       {/* Riepilogo finanziario */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Riepilogo finanziario</h3>
+        
+        {isOverMaxInvestment && (
+          <div className="mb-4 p-4 bg-amber-50 rounded-md border border-amber-200 animate__animated animate__fadeIn">
+            <div className="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p className="text-base font-medium text-amber-800 mb-1">
+                  Investimento superiore a €375.000
+                </p>
+                <p className="text-sm text-amber-700">
+                  Il tuo investimento supera la soglia di €375.000 per cui è possibile ottenere il contributo massimo di €300.000 in regime de minimis. 
+                  Per un'analisi personalizzata e per valutare le migliori opzioni di finanziamento, ti invitiamo a contattare il nostro team di esperti.
+                </p>
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-700">
+                    <strong>Nota:</strong> I calcoli mostrati di seguito sono indicativi. Per progetti di questa entità, offriamo consulenza personalizzata per ottimizzare la struttura del finanziamento e massimizzare i benefici.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
