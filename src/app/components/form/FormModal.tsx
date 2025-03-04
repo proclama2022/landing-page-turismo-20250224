@@ -32,13 +32,45 @@ const STEPS: Step[] = [
   { id: 6, title: 'Conferma', component: FinalStep },
 ];
 
-export default function FormModal({ isOpen, onClose }: FormModalProps) {
+// Utilizziamo una funzione di fabbrica per creare il componente con le props serializzabili
+export default function FormModalFactory() {
+  // Questa funzione client-side gestisce la chiusura del modale
+  const handleClose = () => {
+    // Implementazione della logica di chiusura
+    const event = new CustomEvent('closeFormModal');
+    document.dispatchEvent(event);
+  };
+
+  return <FormModalComponent isOpen={true} />;
+}
+
+// Componente interno che non espone funzioni come props
+function FormModalComponent({ isOpen }: { isOpen: boolean }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
   const [score, setScore] = useState(0);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isModalOpen, setIsModalOpen] = useState(isOpen);
+
+  // Gestisce la chiusura del modale
+  const onClose = () => {
+    setIsModalOpen(false);
+  };
+
+  // Ascolta l'evento di chiusura
+  useEffect(() => {
+    const handleCloseEvent = () => {
+      setIsModalOpen(false);
+    };
+    
+    document.addEventListener('closeFormModal', handleCloseEvent);
+    return () => {
+      document.removeEventListener('closeFormModal', handleCloseEvent);
+    };
+  }, []);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -46,7 +78,7 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [isOpen]);
+  }, [isModalOpen]);
 
   const calculateScore = () => {
     let newScore = 0;
@@ -96,11 +128,11 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
     }));
   };
 
-  if (!isOpen) return null;
+  if (!isModalOpen) return null;
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -139,7 +171,11 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
                   <CompanyStep formData={formData} updateFormData={updateFormData} />
                 )}
                 {currentStep === 4 && (
-                  <LocationStep formData={formData} updateFormData={updateFormData} />
+                  <LocationStep 
+                    formData={formData} 
+                    updateFormData={updateFormData} 
+                    errors={errors}
+                  />
                 )}
                 {currentStep === 5 && (
                   <ProjectStep 
