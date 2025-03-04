@@ -70,15 +70,6 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-gray-100">Informazioni Legali</h3>
-            <ul className="space-y-2">
-              <li className="text-gray-400">Privacy Policy</li>
-              <li className="text-gray-400">Cookie Policy</li>
-              <li className="text-gray-400">Termini e Condizioni</li>
-            </ul>
-          </div>
         </div>
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
