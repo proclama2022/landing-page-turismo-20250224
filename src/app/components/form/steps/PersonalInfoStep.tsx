@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormState } from '@/types/form';
 import FormField from '../FormField';
 
@@ -15,8 +15,15 @@ export default function PersonalInfoStep({ formData, updateFormData }: PersonalI
     updateFormData({ [name]: value });
   };
 
+  // Resetta il campo otherDiscoveryChannel quando l'utente cambia la selezione da "Altro"
+  useEffect(() => {
+    if (formData.discoveryChannel !== 'other' && formData.otherDiscoveryChannel) {
+      updateFormData({ otherDiscoveryChannel: '' });
+    }
+  }, [formData.discoveryChannel]);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate__animated animate__fadeIn">
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-1">Informazioni personali</h2>
         <p className="text-sm text-gray-500">Inserisci i tuoi dati per permetterci di contattarti</p>
@@ -98,6 +105,25 @@ export default function PersonalInfoStep({ formData, updateFormData }: PersonalI
           </div>
           <p className="mt-1 text-xs text-gray-500">Questa informazione ci aiuta a migliorare i nostri canali di comunicazione</p>
         </div>
+
+        {/* Campo aggiuntivo che appare quando l'utente seleziona "Altro" */}
+        {formData.discoveryChannel === 'other' && (
+          <div className="form-field animate__animated animate__fadeIn">
+            <label htmlFor="otherDiscoveryChannel" className="block text-sm font-medium text-gray-700 mb-1">
+              Specifica come ci hai conosciuto <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="otherDiscoveryChannel"
+              name="otherDiscoveryChannel"
+              type="text"
+              value={formData.otherDiscoveryChannel || ''}
+              onChange={handleChange}
+              className="mt-1 block w-full pl-3 pr-3 py-2.5 text-gray-900 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+              placeholder="Specifica come ci hai conosciuto"
+              required
+            />
+          </div>
+        )}
       </div>
     </div>
   );

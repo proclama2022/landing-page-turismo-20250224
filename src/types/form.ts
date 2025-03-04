@@ -159,6 +159,7 @@ export interface FormState {
 
   // Informazioni aggiuntive
   discoveryChannel: string;
+  otherDiscoveryChannel?: string;
   gdprConsent: boolean;
   marketingConsent: boolean;
   score: number;
@@ -221,6 +222,7 @@ export const DEFAULT_FORM_STATE: FormState = {
     financialStatements: false,
   },
   discoveryChannel: '',
+  otherDiscoveryChannel: '',
   gdprConsent: false,
   marketingConsent: false,
   score: 0,
