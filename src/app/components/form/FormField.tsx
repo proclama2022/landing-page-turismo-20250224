@@ -30,6 +30,8 @@ interface FormFieldProps {
   rows?: number;
   accept?: string;
   multiple?: boolean;
+  tooltip?: string;
+  labelClassName?: string;
 }
 
 const getIconComponent = (iconName?: string) => {
@@ -66,6 +68,8 @@ const FormField: React.FC<FormFieldProps> = ({
   rows = 4,
   accept,
   multiple,
+  tooltip,
+  labelClassName,
 }) => {
   const baseInputClasses = `
     w-full px-4 py-2.5 
@@ -224,11 +228,48 @@ const FormField: React.FC<FormFieldProps> = ({
 
   return (
     <div className={`mb-4 ${className || ''}`}>
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      {renderField()}
+      <div className="flex items-center justify-between mb-1">
+        <label
+          htmlFor={name}
+          className={`block text-sm font-medium text-gray-700 ${labelClassName}`}
+        >
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+        {tooltip && (
+          <div className="group relative">
+            <button
+              type="button"
+              className="text-gray-400 hover:text-gray-500 focus:outline-none"
+              aria-label="Informazioni aggiuntive"
+              onClick={(e) => e.preventDefault()}
+            >
+              <svg
+                className="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+            <div className="absolute z-10 w-64 p-2 mt-2 text-sm text-left text-gray-700 transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none top-0 left-1/2">
+              <div className="p-2 bg-white rounded-lg shadow-xs">
+                {tooltip}
+              </div>
+              <div className="absolute w-3 h-3 bg-white transform rotate-45 -translate-y-1/2 left-1/2 -translate-x-1/2 bottom-0 -mb-1"></div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="relative">
+        {renderField()}
+      </div>
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
