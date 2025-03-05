@@ -178,13 +178,13 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {selectedCity && getScoreMessage(selectedCity.score)}
 
       {isOpen && (
-        <div 
+        <div
           ref={dropdownRef}
-          className="fixed inset-0 z-[9999] md:absolute md:inset-auto md:top-full md:left-0 md:right-0 md:mt-1 bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className="absolute top-full left-0 right-0 mt-1 z-[9999] bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
           style={{
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
             animationDuration: '0.2s',
-            maxHeight: window.innerWidth < 768 ? '60vh' : '400px'
+            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 250px)' : '400px',
           }}
         >
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
@@ -229,10 +229,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             </div>
           </div>
 
-          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(60vh - 80px)' : '320px' }}>
+          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(100vh - 250px)' : '320px' }}>
             {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
               <div key={province}>
-                <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+                <div className="sticky top-[62px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
                   Provincia di {province}
                 </div>
                 {provinceCities.map((city) => (
