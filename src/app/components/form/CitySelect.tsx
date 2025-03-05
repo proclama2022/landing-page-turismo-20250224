@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { City, cities } from '@/app/data/cityData';
 
 interface CitySelectProps {
@@ -8,13 +8,8 @@ interface CitySelectProps {
 }
 
 export default function CitySelect({ value, onChange, error }: CitySelectProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [filteredCities, setFilteredCities] = useState<City[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const selectedCity = cities.find(city => city.name === value);
 
   // Verifica se il dispositivo è mobile
   useEffect(() => {
@@ -31,92 +26,6 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
-
-  // Blocca lo scroll del body quando il dropdown è aperto su mobile
-  useEffect(() => {
-    if (isMobile && isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, isMobile]);
-
-  // Chiudi il dropdown quando si clicca fuori
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (
-        dropdownRef.current && 
-        !dropdownRef.current.contains(event.target as Node) &&
-        buttonRef.current && 
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, []);
-
-  // Inizializza le città filtrate quando si apre il dropdown
-  useEffect(() => {
-    if (isOpen) {
-      // Ordina le città alfabeticamente
-      const sortedCities = [...cities].sort((a, b) => a.name.localeCompare(b.name));
-      setFilteredCities(sortedCities);
-      
-      // Focus sulla barra di ricerca se non è mobile
-      if (!isMobile && searchInputRef.current) {
-        setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 100);
-      }
-    } else {
-      setSearchQuery('');
-    }
-  }, [isOpen, isMobile]);
-
-  // Filtra le città in base alla query di ricerca
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      // Se la query è vuota, mostra tutte le città ordinate alfabeticamente
-      const sortedCities = [...cities].sort((a, b) => a.name.localeCompare(b.name));
-      setFilteredCities(sortedCities);
-    } else {
-      // Altrimenti, filtra le città in base alla query
-      const query = searchQuery.toLowerCase();
-      const filtered = cities.filter(city => 
-        city.name.toLowerCase().includes(query) || 
-        city.province.toLowerCase().includes(query)
-      ).sort((a, b) => a.name.localeCompare(b.name));
-      
-      setFilteredCities(filtered);
-    }
-  }, [searchQuery]);
-
-  // Gestisce l'apertura del dropdown
-  const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
-
-  // Gestisce la selezione di una città
-  const handleCitySelection = (cityName: string, e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onChange(cityName);
-    setIsOpen(false);
-  };
 
   // Funzione per ottenere il messaggio motivazionale in base al punteggio
   const getScoreMessage = (score: number) => {
@@ -162,146 +71,32 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
-  const selectedCity = cities.find(city => city.name === value);
-
-  // Rendering per dispositivi mobili
-  if (isMobile) {
-    return (
-      <div className="relative">
-        {/* Pulsante di selezione */}
-        <button
-          ref={buttonRef}
-          type="button"
-          className={`relative w-full bg-white border ${
-            error ? 'border-red-500' : 'border-gray-300'
-          } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 hover:border-blue-400 ${isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''}`}
-          onClick={handleDropdownToggle}
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-        >
-          {selectedCity ? (
-            <span className="block truncate">{selectedCity.name}</span>
-          ) : (
-            <span className="block truncate text-gray-500">
-              Seleziona una città...
-            </span>
-          )}
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg 
-              className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} 
-              viewBox="0 0 20 20" 
-              fill="currentColor"
-            >
-              <path fillRule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </span>
-        </button>
-
-        {/* Messaggio informativo */}
-        <div className="mt-2 mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md animate__animated animate__fadeIn">
-          <p className="text-xs text-blue-700 font-medium flex items-center">
-            <svg className="w-4 h-4 inline-block mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>La scelta del comune influisce sul punteggio del tuo progetto</span>
-          </p>
-        </div>
-
-        {/* Messaggio basato sul punteggio del comune selezionato */}
-        {selectedCity && getScoreMessage(selectedCity.score)}
-
-        {/* Modal a schermo intero per mobile */}
-        {isOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 z-[9999]" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-white w-full h-full flex flex-col">
-              {/* Header con titolo e pulsante di chiusura */}
-              <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center bg-blue-600 text-white">
-                <h3 className="text-lg font-medium">Seleziona una città</h3>
-                <button
-                  type="button"
-                  className="text-white hover:text-gray-200"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              
-              {/* Lista delle città con scorrimento */}
-              <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <div className="py-1 w-full">
-                  {filteredCities.map(city => (
-                    <button
-                      key={`${city.province}-${city.name}`}
-                      className="w-full text-left px-4 py-4 hover:bg-blue-50 border-b border-gray-100 flex flex-col"
-                      style={{ textAlign: 'left', width: '100%' }}
-                      onClick={(e) => handleCitySelection(city.name, e)}
-                    >
-                      <div className="font-medium text-base">{city.name}</div>
-                      <div className="text-sm text-gray-500">Provincia di {city.province}</div>
-                    </button>
-                  ))}
-                </div>
-                
-                {filteredCities.length === 0 && (
-                  <div className="text-center py-8 text-base text-gray-500">
-                    Nessuna città trovata
-                  </div>
-                )}
-              </div>
-              
-              {/* Footer con pulsante di chiusura */}
-              <div className="p-4 border-t border-gray-200 bg-gray-50">
-                <button
-                  type="button"
-                  className="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none text-base"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Chiudi
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
-        )}
-      </div>
-    );
-  }
-
-  // Rendering per desktop
+  // Utilizziamo un semplice elemento select nativo per massima compatibilità
   return (
     <div className="relative">
-      <button
-        ref={buttonRef}
-        type="button"
-        className={`relative w-full bg-white border ${
+      <select
+        className={`w-full bg-white border ${
           error ? 'border-red-500' : 'border-gray-300'
-        } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 hover:border-blue-400 ${isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''}`}
-        onClick={handleDropdownToggle}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-base focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-blue-400 appearance-none`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+          backgroundPosition: 'right 0.5rem center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '1.5em 1.5em',
+          paddingRight: '2.5rem'
+        }}
       >
-        {selectedCity ? (
-          <span className="block truncate">{selectedCity.name}</span>
-        ) : (
-          <span className="block truncate text-gray-500">
-            Seleziona una città...
-          </span>
-        )}
-        <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <svg 
-            className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} 
-            viewBox="0 0 20 20" 
-            fill="currentColor"
-          >
-            <path fillRule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </span>
-      </button>
+        <option value="" disabled>Seleziona una città...</option>
+        {cities
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(city => (
+            <option key={`${city.province}-${city.name}`} value={city.name}>
+              {city.name} ({city.province})
+            </option>
+          ))}
+      </select>
 
       {/* Messaggio informativo */}
       <div className="mt-2 mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md animate__animated animate__fadeIn">
@@ -315,89 +110,6 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
 
       {/* Messaggio basato sul punteggio del comune selezionato */}
       {selectedCity && getScoreMessage(selectedCity.score)}
-
-      {/* Dropdown per desktop */}
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute z-[9999] mt-1 w-full bg-white shadow-lg rounded-md max-h-60 overflow-auto"
-          style={{
-            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
-          }}
-        >
-          {/* Header con barra di ricerca */}
-          <div className="sticky top-0 z-50 bg-white p-3 border-b border-gray-200 w-full">
-            <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-              </div>
-              <input
-                ref={searchInputRef}
-                type="text"
-                className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Cerca città..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                autoComplete="off"
-                autoCapitalize="off"
-                autoCorrect="off"
-                spellCheck="false"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSearchQuery('');
-                    searchInputRef.current?.focus();
-                  }}
-                >
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Lista delle città */}
-          <div className="overflow-y-auto">
-            {filteredCities.length > 0 ? (
-              <div className="py-1 w-full">
-                {filteredCities.map(city => (
-                  <div
-                    key={`${city.province}-${city.name}`}
-                    className={`cursor-pointer px-3 py-2.5 hover:bg-blue-50 w-full ${
-                      value === city.name ? 'bg-blue-100' : ''
-                    }`}
-                    onClick={(e) => handleCitySelection(city.name, e)}
-                  >
-                    <div className="flex justify-between items-center w-full">
-                      <div>
-                        <span className={`${value === city.name ? 'font-medium' : 'font-normal'}`}>
-                          {city.name}
-                        </span>
-                        <span className="ml-2 text-xs text-gray-500">
-                          ({city.province})
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-sm text-gray-500 w-full">
-                Nessuna città trovata per "{searchQuery}"
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       
       {error && (
         <p className="mt-1 text-sm text-red-600">{error}</p>
