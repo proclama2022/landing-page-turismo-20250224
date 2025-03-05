@@ -152,7 +152,7 @@ export default function ProjectStep({ formData, onChange }: ProjectStepProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-1">Dettagli Investimento</h2>
         <p className="text-sm text-gray-500">Fornisci informazioni sul tuo progetto di investimento</p>
@@ -390,4 +390,4 @@ export default function ProjectStep({ formData, onChange }: ProjectStepProps) {
       </div>
     </div>
   );
-} 
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Hero from './components/Hero';
 import Eligibility from './components/Eligibility';
 import FAQ from './components/FAQ';
@@ -10,6 +10,11 @@ import BandoAreas from './components/Services';
 import Testimonials from './components/Testimonials';
 
 export default function Home() {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
   return (
     <main>
       <Hero />

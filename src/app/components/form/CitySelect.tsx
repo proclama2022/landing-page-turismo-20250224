@@ -232,7 +232,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(100vh - 250px)' : '320px' }}>
             {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
               <div key={province}>
-                <div className="sticky top-[62px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+                <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
                   Provincia di {province}
                 </div>
                 {provinceCities.map((city) => (
