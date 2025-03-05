@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { City, cities, searchCities } from '@/app/data/cityData';
+import { City, cities } from '@/app/data/cityData';
 
 interface CitySelectProps {
   value: string;
@@ -8,19 +8,17 @@ interface CitySelectProps {
 }
 
 export default function CitySelect({ value, onChange, error }: CitySelectProps) {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<City[]>([]);
+  const [filteredCities, setFilteredCities] = useState<City[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const mobileInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Verifica se il dispositivo è mobile
   useEffect(() => {
     const checkMobile = () => {
-      // Usa una combinazione di user agent e dimensione dello schermo per rilevare i dispositivi mobili
       const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       const isSmallScreen = window.innerWidth < 768;
       setIsMobile(isMobileDevice || isSmallScreen);
@@ -69,48 +67,56 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     };
   }, []);
 
-  // Reset della query di ricerca quando si chiude il dropdown
+  // Inizializza le città filtrate quando si apre il dropdown
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      // Ordina le città alfabeticamente
+      const sortedCities = [...cities].sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredCities(sortedCities);
+      
+      // Focus sulla barra di ricerca se non è mobile
+      if (!isMobile && searchInputRef.current) {
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 100);
+      }
+    } else {
       setSearchQuery('');
-      setSearchResults([]);
-    } else if (isMobile && isOpen) {
-      // Focus sulla barra di ricerca mobile quando si apre il dropdown
-      setTimeout(() => {
-        mobileInputRef.current?.focus();
-      }, 100);
     }
   }, [isOpen, isMobile]);
 
-  // Gestisce la ricerca e aggiorna i risultati
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.trim()) {
-      // Ricerca esatta per corrispondenza iniziale
-      const queryLower = query.toLowerCase();
-      const results = cities.filter(city => 
-        city.name.toLowerCase().startsWith(queryLower) || 
-        city.name.toLowerCase().includes(' ' + queryLower)
-      );
-      
-      // Se non ci sono risultati con la ricerca esatta, prova una ricerca più ampia
-      if (results.length === 0) {
-        const fallbackResults = cities.filter(city => 
-          city.name.toLowerCase().includes(queryLower) || 
-          city.province.toLowerCase().includes(queryLower)
-        );
-        setSearchResults(fallbackResults);
-      } else {
-        setSearchResults(results);
-      }
+  // Filtra le città in base alla query di ricerca
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      // Se la query è vuota, mostra tutte le città ordinate alfabeticamente
+      const sortedCities = [...cities].sort((a, b) => a.name.localeCompare(b.name));
+      setFilteredCities(sortedCities);
     } else {
-      setSearchResults([]);
+      // Altrimenti, filtra le città in base alla query
+      const query = searchQuery.toLowerCase();
+      const filtered = cities.filter(city => 
+        city.name.toLowerCase().includes(query) || 
+        city.province.toLowerCase().includes(query)
+      ).sort((a, b) => a.name.localeCompare(b.name));
+      
+      setFilteredCities(filtered);
     }
+  }, [searchQuery]);
+
+  // Gestisce l'apertura del dropdown
+  const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
   };
 
-  const selectedCity = cities.find(city => city.name === value);
+  // Gestisce la selezione di una città
+  const handleCitySelection = (cityName: string, e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange(cityName);
+    setIsOpen(false);
+  };
 
   // Funzione per ottenere il messaggio motivazionale in base al punteggio
   const getScoreMessage = (score: number) => {
@@ -156,20 +162,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
-  // Gestisce l'apertura del dropdown
-  const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
-
-  // Gestisce la selezione di una città
-  const handleCitySelection = (cityName: string, e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onChange(cityName);
-    setIsOpen(false);
-  };
+  const selectedCity = cities.find(city => city.name === value);
 
   // Rendering per dispositivi mobili
   if (isMobile) {
@@ -235,84 +228,25 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 </button>
               </div>
               
-              {/* Barra di ricerca */}
-              <div className="sticky top-0 z-50 bg-white p-3 border-b border-gray-200 w-full">
-                <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                  </div>
-                  <input
-                    ref={mobileInputRef}
-                    type="text"
-                    className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Cerca città..."
-                    value={searchQuery}
-                    onChange={handleSearch}
-                    onClick={(e) => e.stopPropagation()}
-                    autoComplete="off"
-                    autoCapitalize="off"
-                    autoCorrect="off"
-                    spellCheck="false"
-                  />
-                  {searchQuery && (
+              {/* Lista delle città con scorrimento */}
+              <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="py-1 w-full">
+                  {filteredCities.map(city => (
                     <button
-                      type="button"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-500 p-2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setSearchQuery('');
-                        setSearchResults([]);
-                        mobileInputRef.current?.focus();
-                      }}
+                      key={`${city.province}-${city.name}`}
+                      className="w-full text-left px-4 py-4 hover:bg-blue-50 border-b border-gray-100 flex flex-col"
+                      style={{ textAlign: 'left', width: '100%' }}
+                      onClick={(e) => handleCitySelection(city.name, e)}
                     >
-                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                      </svg>
+                      <div className="font-medium text-base">{city.name}</div>
+                      <div className="text-sm text-gray-500">Provincia di {city.province}</div>
                     </button>
-                  )}
+                  ))}
                 </div>
-              </div>
-              
-              {/* Lista delle città con scorrimento indipendente */}
-              <div className="flex-1 overflow-y-auto overscroll-contain" onClick={(e) => e.stopPropagation()}>
-                {searchQuery && searchResults.length > 0 && (
-                  <div className="py-1">
-                    {searchResults.map(city => (
-                      <button
-                        key={`${city.province}-${city.name}`}
-                        className={`w-full text-left px-8 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
-                        onClick={(e) => handleCitySelection(city.name, e)}
-                      >
-                        <div className="font-medium text-lg">{city.name}</div>
-                        <div className="text-sm text-gray-500">Provincia di {city.province}</div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {searchQuery && searchResults.length === 0 && (
+                
+                {filteredCities.length === 0 && (
                   <div className="text-center py-8 text-base text-gray-500">
-                    Nessuna città trovata per "{searchQuery}"
-                  </div>
-                )}
-
-                {!searchQuery && (
-                  <div className="py-1">
-                    {cities
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map(city => (
-                        <button
-                          key={`${city.province}-${city.name}`}
-                          className={`w-full text-left px-8 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
-                          onClick={(e) => handleCitySelection(city.name, e)}
-                        >
-                          <div className="font-medium text-lg">{city.name}</div>
-                          <div className="text-sm text-gray-500">Provincia di {city.province}</div>
-                        </button>
-                      ))}
+                    Nessuna città trovata
                   </div>
                 )}
               </div>
@@ -400,12 +334,12 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 </svg>
               </div>
               <input
-                ref={inputRef}
+                ref={searchInputRef}
                 type="text"
                 className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Cerca città..."
                 value={searchQuery}
-                onChange={handleSearch}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
                 autoComplete="off"
                 autoCapitalize="off"
@@ -420,8 +354,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     e.preventDefault();
                     e.stopPropagation();
                     setSearchQuery('');
-                    setSearchResults([]);
-                    inputRef.current?.focus();
+                    searchInputRef.current?.focus();
                   }}
                 >
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -434,9 +367,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
 
           {/* Lista delle città */}
           <div className="overflow-y-auto">
-            {searchQuery && searchResults.length > 0 && (
+            {filteredCities.length > 0 ? (
               <div className="py-1 w-full">
-                {searchResults.map(city => (
+                {filteredCities.map(city => (
                   <div
                     key={`${city.province}-${city.name}`}
                     className={`cursor-pointer px-3 py-2.5 hover:bg-blue-50 w-full ${
@@ -457,38 +390,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                   </div>
                 ))}
               </div>
-            )}
-
-            {searchQuery && searchResults.length === 0 && (
+            ) : (
               <div className="text-center py-8 text-sm text-gray-500 w-full">
                 Nessuna città trovata per "{searchQuery}"
-              </div>
-            )}
-
-            {!searchQuery && (
-              <div className="py-1 w-full">
-                {cities
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map(city => (
-                    <div
-                      key={`${city.province}-${city.name}`}
-                      className={`cursor-pointer px-3 py-2.5 hover:bg-blue-50 w-full ${
-                        value === city.name ? 'bg-blue-100' : ''
-                      }`}
-                      onClick={(e) => handleCitySelection(city.name, e)}
-                    >
-                      <div className="flex justify-between items-center w-full">
-                        <div>
-                          <span className={`${value === city.name ? 'font-medium' : 'font-normal'}`}>
-                            {city.name}
-                          </span>
-                          <span className="ml-2 text-xs text-gray-500">
-                            ({city.province})
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
               </div>
             )}
           </div>
