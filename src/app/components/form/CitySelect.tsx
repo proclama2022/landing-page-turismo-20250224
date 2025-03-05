@@ -205,11 +205,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
         {/* Messaggio basato sul punteggio del comune selezionato */}
         {selectedCity && getScoreMessage(selectedCity.score)}
 
-        {/* Modal per mobile */}
+        {/* Lista semplice per mobile */}
         {isOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
-              {/* Header */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center">
+            <div className="bg-white w-[90%] max-w-md rounded-lg shadow-xl overflow-hidden max-h-[80vh] flex flex-col">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                 <h3 className="text-lg font-medium text-gray-900">Seleziona una città</h3>
                 <button
@@ -223,43 +222,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 </button>
               </div>
               
-              {/* Barra di ricerca */}
-              <div className="p-4 border-b border-gray-200">
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-md pl-10 pr-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Cerca città..."
-                    value={searchQuery}
-                    onChange={handleSearch}
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Lista città */}
-              <div className="flex-1 overflow-y-auto p-1">
-                {searchQuery && searchResults.length > 0 ? (
-                  searchResults.map(city => (
-                    <button
-                      key={`${city.province}-${city.name}`}
-                      className={`w-full text-left px-4 py-3 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
-                      onClick={(e) => handleCitySelection(city.name, e)}
-                    >
-                      <div className="font-medium">{city.name}</div>
-                      <div className="text-sm text-gray-500">Provincia di {city.province}</div>
-                    </button>
-                  ))
-                ) : searchQuery && searchResults.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">
-                    Nessuna città trovata per "{searchQuery}"
-                  </div>
-                ) : (
-                  cities
+              <div className="flex-1 overflow-y-auto">
+                <div className="py-1">
+                  {cities
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map(city => (
                       <button
@@ -270,11 +235,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                         <div className="font-medium">{city.name}</div>
                         <div className="text-sm text-gray-500">Provincia di {city.province}</div>
                       </button>
-                    ))
-                )}
+                    ))}
+                </div>
               </div>
               
-              {/* Footer */}
               <div className="p-4 border-t border-gray-200">
                 <button
                   type="button"
