@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { City, cities, getCitiesByProvince } from '@/app/data/cityData';
+import { City, cities, getCitiesByProvince, searchCities } from '@/app/data/cityData';
 
 interface CitySelectProps {
   value: string;
@@ -102,19 +102,14 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       }
     }
     
-    // Su mobile non aggiungiamo questo listener perché gestiamo la chiusura con un pulsante dedicato
-    if (!isMobile) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-      
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-        document.removeEventListener('touchstart', handleClickOutside);
-      };
-    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     
-    return undefined;
-  }, [dropdownRef, buttonRef, isMobile]);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [dropdownRef, buttonRef]);
 
   // Reset della query di ricerca quando si chiude il dropdown
   useEffect(() => {
@@ -130,18 +125,33 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setSearchQuery(query);
     
     if (query.trim()) {
-      // Per ricerche, mostriamo una lista piatta di risultati per maggiore chiarezza
-      const results = cities.filter(city => 
-        city.name.toLowerCase().includes(query.toLowerCase())
-      ).sort((a, b) => {
-        // Ordina prima per corrispondenza esatta, poi per inizio parola, poi alfabeticamente
-        const aStartsWith = a.name.toLowerCase().startsWith(query.toLowerCase());
-        const bStartsWith = b.name.toLowerCase().startsWith(query.toLowerCase());
-        
-        if (aStartsWith && !bStartsWith) return -1;
-        if (!aStartsWith && bStartsWith) return 1;
-        return a.name.localeCompare(b.name);
-      });
+      // Utilizziamo la funzione searchCities per una ricerca più accurata
+      const results = searchCities(query)
+        .sort((a, b) => {
+          // Ordina prima per corrispondenza esatta, poi per inizio parola, poi alfabeticamente
+          const aLower = a.name.toLowerCase();
+          const bLower = b.name.toLowerCase();
+          const queryLower = query.toLowerCase();
+          
+          const aExact = aLower === queryLower;
+          const bExact = bLower === queryLower;
+          
+          if (aExact && !bExact) return -1;
+          if (!aExact && bExact) return 1;
+          
+          const aStartsWith = aLower.startsWith(queryLower);
+          const bStartsWith = bLower.startsWith(queryLower);
+          
+          if (aStartsWith && !bStartsWith) return -1;
+          if (!aStartsWith && bStartsWith) return 1;
+          
+          // Ordina per lunghezza (preferendo nomi più corti)
+          if (a.name.length !== b.name.length) {
+            return a.name.length - b.name.length;
+          }
+          
+          return a.name.localeCompare(b.name);
+        });
       
       setFlatSearchResults(results);
     } else {
@@ -373,7 +383,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             {searchQuery && flatSearchResults.length > 0 && (
               <div className="py-2">
                 <div className="sticky top-[60px] z-40 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 border-t border-b border-blue-200">
-                  Risultati di ricerca per "{searchQuery}"
+                  Risultati di ricerca per "{searchQuery}" ({flatSearchResults.length})
                 </div>
                 {flatSearchResults.map(city => renderCityItem(city))}
               </div>
