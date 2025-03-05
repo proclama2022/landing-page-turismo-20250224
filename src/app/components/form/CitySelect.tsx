@@ -88,28 +88,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setSearchQuery(query);
     
     if (query.trim()) {
-      const results = searchCities(query)
-        .sort((a, b) => {
-          // Ordina prima per corrispondenza esatta, poi per inizio parola, poi alfabeticamente
-          const aLower = a.name.toLowerCase();
-          const bLower = b.name.toLowerCase();
-          const queryLower = query.toLowerCase();
-          
-          const aExact = aLower === queryLower;
-          const bExact = bLower === queryLower;
-          
-          if (aExact && !bExact) return -1;
-          if (!aExact && bExact) return 1;
-          
-          const aStartsWith = aLower.startsWith(queryLower);
-          const bStartsWith = bLower.startsWith(queryLower);
-          
-          if (aStartsWith && !bStartsWith) return -1;
-          if (!aStartsWith && bStartsWith) return 1;
-          
-          return a.name.localeCompare(b.name);
-        });
-      
+      const results = searchCities(query);
       setSearchResults(results);
     } else {
       setSearchResults([]);
@@ -231,6 +210,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           }`}
           style={{
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
+            left: isMobile ? 0 : undefined,
+            right: isMobile ? 0 : undefined,
+            width: isMobile ? '100%' : undefined
           }}
         >
           {/* Header con barra di ricerca */}
@@ -264,6 +246,9 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 onChange={handleSearch}
                 onClick={(e) => e.stopPropagation()}
                 autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
               />
               {searchQuery && (
                 <button

@@ -384,9 +384,29 @@ export const getCityScore = (city: City): number => {
 
 // Helper per la ricerca delle città
 export const searchCities = (query: string): City[] => {
-  const normalizedQuery = query.toLowerCase();
-  return cities.filter(city => 
-    city.name.toLowerCase().includes(normalizedQuery) ||
-    city.province.toLowerCase().includes(normalizedQuery)
+  const normalizedQuery = query.toLowerCase().trim();
+  
+  // Se la query è vuota, restituisci un array vuoto
+  if (!normalizedQuery) return [];
+  
+  // Prima cerca le corrispondenze esatte
+  const exactMatches = cities.filter(city => 
+    city.name.toLowerCase() === normalizedQuery
   );
+  
+  // Poi cerca le città che iniziano con la query
+  const startsWithMatches = cities.filter(city => 
+    city.name.toLowerCase().startsWith(normalizedQuery) &&
+    !exactMatches.includes(city)
+  );
+  
+  // Infine cerca le città che contengono la query
+  const containsMatches = cities.filter(city => 
+    city.name.toLowerCase().includes(normalizedQuery) &&
+    !exactMatches.includes(city) &&
+    !startsWithMatches.includes(city)
+  );
+  
+  // Unisci i risultati dando priorità alle corrispondenze esatte, poi a quelle che iniziano con la query
+  return [...exactMatches, ...startsWithMatches, ...containsMatches];
 }; 
