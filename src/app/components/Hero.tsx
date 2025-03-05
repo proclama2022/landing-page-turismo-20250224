@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState } from 'react';
 import FormModal from './form/FormModal';
 import AnimatedSection from './ui/AnimatedSection';

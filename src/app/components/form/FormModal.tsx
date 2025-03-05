@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import PersonalInfoStep from './steps/PersonalInfoStep';
@@ -11,8 +11,8 @@ import ProjectStep from './steps/ProjectStep';
 import FinalStep from './steps/FinalStep';
 import StepIndicator from './StepIndicator';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
-
-interface FormModalProps {
+    
+type FormModalProps = {
     isOpen: boolean;
     onClose: () => void;
 }
@@ -37,6 +37,13 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
     const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
     const [score, setScore] = useState(0);
     const [errors, setErrors] = useState<Record<string, any>>({});
+
+    // Funzione per gestire la chiusura del modale
+    const handleClose = useCallback(() => {
+        if (typeof onClose === 'function') {
+            onClose();
+        }
+    }, [onClose]);
 
     const calculateScore = () => {
         let newScore = 0;
@@ -108,7 +115,7 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
                                 {STEPS.find(step => step.id === currentStep)?.title || 'Form'}
                             </h2>
                             <button
-                                onClick={onClose}
+                                onClick={handleClose}
                                 className="text-gray-500 hover:text-gray-700 focus:outline-none"
                             >
                                 <XMarkIcon className="h-6 w-6" />
@@ -162,7 +169,7 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
                                     {currentStep === 1 && (
                                         <button
                                             type="button"
-                                            onClick={onClose}
+                                            onClick={handleClose}
                                             className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                                         >
                                             Annulla

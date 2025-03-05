@@ -28,8 +28,12 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
   // Chiudi il dropdown quando si clicca fuori
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
-          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target as Node) &&
+        buttonRef.current && 
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -112,48 +116,25 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
-  // Calcola la posizione del dropdown
-  const getDropdownPosition = () => {
-    if (!buttonRef.current || !containerRef.current) return {};
-    
-    const buttonRect = buttonRef.current.getBoundingClientRect();
-    const isMobile = window.innerWidth < 768;
-    
-    if (isMobile) {
-      return {
-        position: 'fixed' as const,
-        top: buttonRect.bottom + window.scrollY + 8,
-        left: 0,
-        right: 0,
-        width: '100%',
-        maxHeight: '60vh',
-        zIndex: 9999,
-        padding: '0 16px',
-        boxSizing: 'border-box' as const,
-        transform: 'translateX(0)', // Previene lo spostamento laterale
-      };
-    }
-    
-    // Su desktop, mantieni il comportamento attuale
-    return {
-      position: 'absolute' as const,
-      top: buttonRect.height + 8,
-      left: 0,
-      width: '100%',
-      maxHeight: '400px',
-      zIndex: 50
-    };
-  };
-
   // Gestisce l'apertura del dropdown senza focus automatico sull'input
   const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsOpen(!isOpen);
+    
+    // Se stiamo aprendo il dropdown, assicuriamoci che sia visibile
+    if (!isOpen) {
+      // Piccolo timeout per permettere al DOM di aggiornarsi
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 50);
+    }
   };
 
   return (
-    <div className="relative overflow-hidden" ref={containerRef}>
+    <div className="relative overflow-visible" ref={containerRef}>
       <button
         ref={buttonRef}
         type="button"
@@ -199,11 +180,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className="bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-hidden focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className="fixed inset-0 z-[9999] md:absolute md:inset-auto md:top-full md:left-0 md:right-0 md:mt-1 bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
           style={{
-            ...getDropdownPosition(),
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
-            animationDuration: '0.2s'
+            animationDuration: '0.2s',
+            maxHeight: window.innerWidth < 768 ? '60vh' : '400px'
           }}
         >
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
@@ -248,7 +229,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             </div>
           </div>
 
-          <div className="overflow-y-auto" style={{ maxHeight: 'calc(60vh - 80px)' }}>
+          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(60vh - 80px)' : '320px' }}>
             {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
               <div key={province}>
                 <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
