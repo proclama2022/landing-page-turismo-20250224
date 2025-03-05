@@ -15,6 +15,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, maxHeight: 0 });
 
   useEffect(() => {
     // Ordina le città per provincia e poi per nome
@@ -24,6 +25,33 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }, {} as Record<string, City[]>);
     setGroupedCities(sorted);
   }, []);
+
+  // Calcola la posizione ottimale del dropdown quando si apre
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const spaceBelow = windowHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+      const isMobile = window.innerWidth < 768;
+      
+      // Calcola l'altezza massima disponibile
+      let maxHeight = Math.min(400, isMobile ? windowHeight * 0.6 : 400);
+      
+      // Posiziona il dropdown
+      setDropdownPosition({
+        top: buttonRect.height + 4, // 4px di margine
+        maxHeight
+      });
+      
+      // Focus sull'input di ricerca dopo un breve ritardo
+      setTimeout(() => {
+        if (inputRef.current && isMobile) {
+          inputRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [isOpen]);
 
   // Chiudi il dropdown quando si clicca fuori
   useEffect(() => {
@@ -39,7 +67,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
     
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside); // Aggiunto evento touch per dispositivi mobili
+    document.addEventListener('touchstart', handleClickOutside);
     
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -116,21 +144,19 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
-  // Gestisce l'apertura del dropdown senza focus automatico sull'input
+  // Gestisce l'apertura del dropdown
   const handleDropdownToggle = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsOpen(!isOpen);
-    
-    // Se stiamo aprendo il dropdown, assicuriamoci che sia visibile
-    if (!isOpen) {
-      // Piccolo timeout per permettere al DOM di aggiornarsi
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      }, 50);
-    }
+  };
+
+  // Gestisce la selezione di una città
+  const handleCitySelection = (cityName: string, e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange(cityName);
+    setIsOpen(false);
   };
 
   return (
@@ -142,7 +168,6 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           error ? 'border-red-500' : 'border-gray-300'
         } rounded-md shadow-sm pl-3 pr-10 py-2.5 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 hover:border-blue-400 ${isOpen ? 'ring-1 ring-blue-500 border-blue-500' : ''}`}
         onClick={handleDropdownToggle}
-        onTouchEnd={handleDropdownToggle}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -164,7 +189,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
         </span>
       </button>
 
-      {/* Messaggio motivazionale sempre visibile */}
+      {/* Messaggio informativo (solo fuori dal dropdown) */}
       <div className="mt-2 mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md animate__animated animate__fadeIn">
         <p className="text-xs text-blue-700 font-medium flex items-center">
           <svg className="w-4 h-4 inline-block mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -180,21 +205,16 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-0 right-0 mt-1 z-[9999] bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className="absolute left-0 right-0 z-[9999] bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
           style={{
+            top: `${dropdownPosition.top}px`,
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
             animationDuration: '0.2s',
-            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 200px)' : '400px',
+            maxHeight: `${dropdownPosition.maxHeight}px`,
+            width: '100%'
           }}
         >
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
-            {/* Ripristino del messaggio motivazionale all'interno del dropdown */}
-            <div className="mb-2 text-sm font-medium text-blue-600 animate__animated animate__fadeIn">
-              <svg className="w-5 h-5 inline-block mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              La scelta del comune influisce sul punteggio del tuo progetto
-            </div>
             <div className="relative">
               <input
                 ref={inputRef}
@@ -204,7 +224,6 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                 value={searchQuery}
                 onChange={handleSearch}
                 onClick={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck="false"
@@ -229,10 +248,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             </div>
           </div>
 
-          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(100vh - 200px)' : '320px' }}>
+          <div className="overflow-y-auto" style={{ maxHeight: `${dropdownPosition.maxHeight - 60}px` }}>
             {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
               <div key={province}>
-                <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+                <div className="sticky top-[60px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
                   Provincia di {province}
                 </div>
                 {provinceCities.map((city) => (
@@ -241,18 +260,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     className={`cursor-pointer select-none relative py-3 pl-3 pr-9 hover:bg-blue-50 transition-colors duration-150 ${
                       value === city.name ? 'bg-blue-100' : ''
                     }`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onChange(city.name);
-                      setIsOpen(false);
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onChange(city.name);
-                      setIsOpen(false);
-                    }}
+                    onClick={(e) => handleCitySelection(city.name, e)}
                   >
                     <div className="flex justify-between items-center">
                       <span className={`block truncate ${value === city.name ? 'font-medium' : 'font-normal'}`}>

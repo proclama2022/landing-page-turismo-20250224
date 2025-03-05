@@ -60,8 +60,14 @@ export default function Hero() {
               </AnimatedButton>
               <AnimatedButton 
                 className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-semibold text-lg"
+                onClick={() => {
+                  const bandoAreasSection = document.getElementById('bando-areas');
+                  if (bandoAreasSection) {
+                    bandoAreasSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
-                <a href="#bando-areas">Scopri le aree finanziabili</a>
+                Scopri le aree finanziabili
               </AnimatedButton>
             </div>
           </AnimatedSection>

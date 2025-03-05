@@ -1,13 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import AnimateWhenVisible from './AnimateWhenVisible';
 
 export default function BandoAreas() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Assicura che la sezione non causi uno scroll automatico all'avvio
+  useEffect(() => {
+    if (sectionRef.current && window.location.hash === '#bando-areas') {
+      // Rimuove l'hash dall'URL senza causare uno scroll
+      history.replaceState(null, document.title, window.location.pathname + window.location.search);
+    }
+  }, []);
+
   return (
-    <section id="bando-areas" className="py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+    <section ref={sectionRef} id="bando-areas" className="py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
       <div className="container mx-auto px-4">
         <AnimateWhenVisible>
           <div className="text-center mb-16">
