@@ -184,7 +184,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           style={{
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
             animationDuration: '0.2s',
-            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 250px)' : '400px',
+            maxHeight: window.innerWidth < 768 ? 'calc(100vh - 200px)' : '400px',
           }}
         >
           <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
@@ -229,7 +229,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             </div>
           </div>
 
-          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(100vh - 250px)' : '320px' }}>
+          <div className="overflow-y-auto" style={{ maxHeight: window.innerWidth < 768 ? 'calc(100vh - 200px)' : '320px' }}>
             {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
               <div key={province}>
                 <div className="sticky top-[84px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">

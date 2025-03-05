@@ -42,9 +42,6 @@ export interface Eligibility {
 
 export interface LocalUnit {
   municipality: string;
-  province: string;
-  address: string;
-  postalCode: string;
 }
 
 export interface Requirements {
@@ -188,9 +185,6 @@ export const DEFAULT_FORM_STATE: FormState = {
   },
   localUnit: {
     municipality: '',
-    province: '',
-    address: '',
-    postalCode: '',
   },
   requirements: {
     businessRegistry: false,

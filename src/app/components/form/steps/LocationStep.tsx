@@ -22,15 +22,11 @@ export default function LocationStep({
     if (selectedCity) {
       const localUnit: LocalUnit = formData.localUnit || {
         municipality: '',
-        province: '',
-        address: '',
-        postalCode: ''
       };
       updateFormData({
         localUnit: {
           ...localUnit,
           municipality: selectedCity.name,
-          province: selectedCity.province,
         }
       });
     }
@@ -86,72 +82,6 @@ export default function LocationStep({
             </svg>
             <span className="text-sm">La scelta del comune influisce sul punteggio del tuo progetto</span>
           </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Indirizzo <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={formData.localUnit?.address || ''}
-            onChange={(e) => {
-              const updatedLocalUnit = formData.localUnit ? { ...formData.localUnit, address: e.target.value } : {municipality: '', province: '', address: e.target.value, postalCode: ''};
-              updateFormData({ localUnit: updatedLocalUnit });
-            }}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Via/Piazza e numero civico"
-          />
-          {errors?.localUnit?.address && (
-            <p className="mt-1 text-sm text-red-600">{errors.localUnit.address}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
-            CAP <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="postalCode"
-            name="postalCode"
-            value={formData.localUnit?.postalCode || ''}
-            onChange={(e) => {
-              const updatedLocalUnit = formData.localUnit ? { ...formData.localUnit, postalCode: e.target.value } : {municipality: '', province: '', address: '', postalCode: e.target.value};
-              updateFormData({ localUnit: updatedLocalUnit });
-            }}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Codice di avviamento postale"
-          />
-          {errors?.localUnit?.postalCode && (
-            <p className="mt-1 text-sm text-red-600">{errors.localUnit.postalCode}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
-            Provincia <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="province"
-            name="province"
-            value={formData.localUnit?.province || ''}
-            onChange={(e) => {
-              const updatedLocalUnit = formData.localUnit ? { ...formData.localUnit, province: e.target.value } : {municipality: '', province: e.target.value, address: '', postalCode: ''};
-              updateFormData({ localUnit: updatedLocalUnit });
-            }}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Provincia"
-            readOnly
-          />
-          {errors?.localUnit?.province && (
-            <p className="mt-1 text-sm text-red-600">{errors.localUnit.province}</p>
-          )}
         </div>
       </div>
     </div>

@@ -159,19 +159,19 @@ export const validateStep = (step: number, formData: FormState): string[] => {
     case 2: // Requirements
       errors.push(...validateRequirements(formData.requirements));
       break;
+      
+    case 3: // Company Info
+      errors.push(...validateCompanyInfo({ ...formData.company, vatNumber: formData.vatNumber, atecoCode: formData.atecoCode, companySize: formData.companySize }));
+      break;
 
-    case 3: // Project Details
+    case 4: // Project Details
       errors.push(...validateProjectDetails(formData));
       break;
 
-    case 3: // Budget
-      errors.push(...validateExpenses(formData.expenses, formData.totalAmount));
-      break;
-
-    case 4: // Documents
+    case 5: // Documents
       errors.push(...validateDocuments(formData.documents, formData.regimeType));
       break;
-
+      
     default:
       break;
   }
