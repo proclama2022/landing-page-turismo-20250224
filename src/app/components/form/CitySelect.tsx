@@ -159,19 +159,6 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     }
   };
 
-  // Determina quali città mostrare in base alla ricerca
-  const filteredCities = searchQuery
-    ? Object.entries(groupedCities).reduce((acc, [province, provinceCities]) => {
-        const filtered = provinceCities.filter(city =>
-          city.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (filtered.length > 0) {
-          acc[province] = filtered;
-        }
-        return acc;
-      }, {} as Record<string, City[]>)
-    : groupedCities;
-
   const selectedCity = cities.find(city => city.name === value);
 
   // Funzione per ottenere il messaggio motivazionale in base al punteggio
@@ -381,11 +368,13 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
           <div className={`overflow-y-auto ${isMobile ? 'flex-grow' : ''}`} style={{ maxHeight: isMobile ? 'none' : `${dropdownPosition.maxHeight - 70}px` }}>
             {/* Mostra risultati di ricerca in formato piatto quando c'è una query di ricerca */}
             {searchQuery && flatSearchResults.length > 0 && (
-              <div className="py-2">
-                <div className="sticky top-[60px] z-40 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 border-t border-b border-blue-200">
+              <div className="py-2 w-full">
+                <div className="sticky top-[60px] z-40 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 border-t border-b border-blue-200 w-full">
                   Risultati di ricerca per "{searchQuery}" ({flatSearchResults.length})
                 </div>
-                {flatSearchResults.map(city => renderCityItem(city))}
+                <div className="w-full">
+                  {flatSearchResults.map(city => renderCityItem(city))}
+                </div>
               </div>
             )}
 
@@ -397,14 +386,20 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             )}
 
             {/* Mostra tutte le città raggruppate per provincia quando non c'è ricerca */}
-            {!searchQuery && Object.entries(groupedCities).map(([province, provinceCities], provinceIndex) => (
-              <div key={province}>
-                <div className="sticky top-[60px] z-40 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
-                  Provincia di {province}
-                </div>
-                {provinceCities.map(city => renderCityItem(city))}
+            {!searchQuery && (
+              <div className="w-full">
+                {Object.entries(groupedCities).map(([province, provinceCities], provinceIndex) => (
+                  <div key={province} className="w-full">
+                    <div className="sticky top-[60px] z-40 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 border-t border-b border-gray-200 w-full">
+                      Provincia di {province}
+                    </div>
+                    <div className="w-full">
+                      {provinceCities.map(city => renderCityItem(city))}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
           
           {/* Footer con pulsante di chiusura su mobile */}
