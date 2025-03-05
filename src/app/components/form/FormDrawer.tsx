@@ -37,9 +37,6 @@ const initialFormState: FormState = {
   },
   localUnit: {
     municipality: '',
-    province: '',
-    address: '',
-    postalCode: ''
   },
   requirements: {
     businessRegistry: false,
