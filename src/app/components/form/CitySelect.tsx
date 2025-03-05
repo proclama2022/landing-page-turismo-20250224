@@ -88,7 +88,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setSearchQuery(query);
     
     if (query.trim()) {
-      const results = searchCities(query);
+      // Ricerca più permissiva
+      const results = cities.filter(city => 
+        city.name.toLowerCase().includes(query.toLowerCase()) || 
+        city.province.toLowerCase().includes(query.toLowerCase())
+      );
       setSearchResults(results);
     } else {
       setSearchResults([]);
@@ -231,7 +235,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                   <input
                     ref={mobileInputRef}
                     type="text"
-                    className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Cerca città..."
                     value={searchQuery}
                     onChange={handleSearch}
@@ -244,7 +248,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                   {searchQuery && (
                     <button
                       type="button"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-500"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-500 p-2"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -253,7 +257,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                         mobileInputRef.current?.focus();
                       }}
                     >
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                       </svg>
                     </button>
@@ -268,10 +272,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     {searchResults.map(city => (
                       <button
                         key={`${city.province}-${city.name}`}
-                        className={`w-full text-left px-4 py-3 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
+                        className={`w-full text-left px-6 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
                         onClick={(e) => handleCitySelection(city.name, e)}
                       >
-                        <div className="font-medium text-base">{city.name}</div>
+                        <div className="font-medium text-lg">{city.name}</div>
                         <div className="text-sm text-gray-500">Provincia di {city.province}</div>
                       </button>
                     ))}
@@ -291,10 +295,10 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                       .map(city => (
                         <button
                           key={`${city.province}-${city.name}`}
-                          className={`w-full text-left px-4 py-3 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
+                          className={`w-full text-left px-6 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
                           onClick={(e) => handleCitySelection(city.name, e)}
                         >
-                          <div className="font-medium text-base">{city.name}</div>
+                          <div className="font-medium text-lg">{city.name}</div>
                           <div className="text-sm text-gray-500">Provincia di {city.province}</div>
                         </button>
                       ))}
