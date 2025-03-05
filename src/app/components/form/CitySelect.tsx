@@ -88,12 +88,23 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setSearchQuery(query);
     
     if (query.trim()) {
-      // Ricerca più permissiva
+      // Ricerca esatta per corrispondenza iniziale
+      const queryLower = query.toLowerCase();
       const results = cities.filter(city => 
-        city.name.toLowerCase().includes(query.toLowerCase()) || 
-        city.province.toLowerCase().includes(query.toLowerCase())
+        city.name.toLowerCase().startsWith(queryLower) || 
+        city.name.toLowerCase().includes(' ' + queryLower)
       );
-      setSearchResults(results);
+      
+      // Se non ci sono risultati con la ricerca esatta, prova una ricerca più ampia
+      if (results.length === 0) {
+        const fallbackResults = cities.filter(city => 
+          city.name.toLowerCase().includes(queryLower) || 
+          city.province.toLowerCase().includes(queryLower)
+        );
+        setSearchResults(fallbackResults);
+      } else {
+        setSearchResults(results);
+      }
     } else {
       setSearchResults([]);
     }
@@ -272,7 +283,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     {searchResults.map(city => (
                       <button
                         key={`${city.province}-${city.name}`}
-                        className={`w-full text-left px-6 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
+                        className={`w-full text-left px-8 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
                         onClick={(e) => handleCitySelection(city.name, e)}
                       >
                         <div className="font-medium text-lg">{city.name}</div>
@@ -295,7 +306,7 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                       .map(city => (
                         <button
                           key={`${city.province}-${city.name}`}
-                          className={`w-full text-left px-6 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
+                          className={`w-full text-left px-8 py-4 hover:bg-blue-50 ${value === city.name ? 'bg-blue-100' : ''}`}
                           onClick={(e) => handleCitySelection(city.name, e)}
                         >
                           <div className="font-medium text-lg">{city.name}</div>
