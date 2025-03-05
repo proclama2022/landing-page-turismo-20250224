@@ -11,11 +11,27 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [groupedCities, setGroupedCities] = useState<Record<string, City[]>>({});
+  const [flatSearchResults, setFlatSearchResults] = useState<City[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, maxHeight: 0 });
+
+  // Verifica se il dispositivo è mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
 
   useEffect(() => {
     // Ordina le città per provincia e poi per nome
@@ -26,32 +42,52 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setGroupedCities(sorted);
   }, []);
 
+  // Blocca lo scroll del body quando il dropdown è aperto su mobile
+  useEffect(() => {
+    if (isMobile) {
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, isMobile]);
+
   // Calcola la posizione ottimale del dropdown quando si apre
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const spaceBelow = windowHeight - buttonRect.bottom;
-      const spaceAbove = buttonRect.top;
-      const isMobile = window.innerWidth < 768;
       
-      // Calcola l'altezza massima disponibile
-      let maxHeight = Math.min(400, isMobile ? windowHeight * 0.6 : 400);
-      
-      // Posiziona il dropdown
-      setDropdownPosition({
-        top: buttonRect.height + 4, // 4px di margine
-        maxHeight
-      });
+      if (isMobile) {
+        // Su mobile, il dropdown occupa l'intera altezza dello schermo
+        setDropdownPosition({
+          top: 0,
+          maxHeight: windowHeight
+        });
+      } else {
+        // Su desktop, calcola lo spazio disponibile
+        const spaceBelow = windowHeight - buttonRect.bottom;
+        const maxHeight = Math.min(500, spaceBelow - 20); // 20px di margine
+        
+        setDropdownPosition({
+          top: buttonRect.height + 4,
+          maxHeight
+        });
+      }
       
       // Focus sull'input di ricerca dopo un breve ritardo
       setTimeout(() => {
-        if (inputRef.current && isMobile) {
+        if (inputRef.current) {
           inputRef.current.focus();
         }
       }, 100);
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   // Chiudi il dropdown quando si clicca fuori
   useEffect(() => {
@@ -66,26 +102,54 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       }
     }
     
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
+    // Su mobile non aggiungiamo questo listener perché gestiamo la chiusura con un pulsante dedicato
+    if (!isMobile) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('touchstart', handleClickOutside);
+      };
+    }
     
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, [dropdownRef, buttonRef]);
+    return undefined;
+  }, [dropdownRef, buttonRef, isMobile]);
 
   // Reset della query di ricerca quando si chiude il dropdown
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('');
+      setFlatSearchResults([]);
     }
   }, [isOpen]);
 
+  // Gestisce la ricerca e aggiorna i risultati
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    if (query.trim()) {
+      // Per ricerche, mostriamo una lista piatta di risultati per maggiore chiarezza
+      const results = cities.filter(city => 
+        city.name.toLowerCase().includes(query.toLowerCase())
+      ).sort((a, b) => {
+        // Ordina prima per corrispondenza esatta, poi per inizio parola, poi alfabeticamente
+        const aStartsWith = a.name.toLowerCase().startsWith(query.toLowerCase());
+        const bStartsWith = b.name.toLowerCase().startsWith(query.toLowerCase());
+        
+        if (aStartsWith && !bStartsWith) return -1;
+        if (!aStartsWith && bStartsWith) return 1;
+        return a.name.localeCompare(b.name);
+      });
+      
+      setFlatSearchResults(results);
+    } else {
+      setFlatSearchResults([]);
+    }
   };
 
+  // Determina quali città mostrare in base alla ricerca
   const filteredCities = searchQuery
     ? Object.entries(groupedCities).reduce((acc, [province, provinceCities]) => {
         const filtered = provinceCities.filter(city =>
@@ -159,6 +223,40 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
     setIsOpen(false);
   };
 
+  // Chiude il dropdown
+  const handleCloseDropdown = () => {
+    setIsOpen(false);
+  };
+
+  // Renderizza un elemento città
+  const renderCityItem = (city: City) => (
+    <div
+      key={`${city.province}-${city.name}`}
+      className={`cursor-pointer select-none relative py-3.5 pl-3 pr-9 hover:bg-blue-50 transition-colors duration-150 ${
+        value === city.name ? 'bg-blue-100' : ''
+      }`}
+      onClick={(e) => handleCitySelection(city.name, e)}
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center">
+          <span className={`block truncate ${value === city.name ? 'font-medium' : 'font-normal'}`}>
+            {city.name}
+          </span>
+          <span className="ml-2 text-xs text-gray-500">
+            ({city.province})
+          </span>
+        </div>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+          city.score >= 6 ? 'bg-green-100 text-green-800' : 
+          city.score >= 3 ? 'bg-yellow-100 text-yellow-800' : 
+          'bg-red-100 text-red-800'
+        }`}>
+          {city.score} punti
+        </span>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative overflow-visible" ref={containerRef}>
       <button
@@ -205,21 +303,41 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute left-0 right-0 z-[9999] bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm animate__animated animate__fadeIn"
+          className={`${isMobile ? 'fixed inset-0 z-[9999] flex flex-col' : 'absolute left-0 right-0 z-[9999]'} bg-white shadow-lg rounded-md overflow-hidden focus:outline-none sm:text-sm animate__animated animate__fadeIn`}
           style={{
-            top: `${dropdownPosition.top}px`,
+            top: isMobile ? 0 : `${dropdownPosition.top}px`,
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
             animationDuration: '0.2s',
-            maxHeight: `${dropdownPosition.maxHeight}px`,
-            width: '100%'
+            maxHeight: isMobile ? '100%' : `${dropdownPosition.maxHeight}px`,
+            width: isMobile ? '100%' : '100%'
           }}
         >
-          <div className="sticky top-0 z-50 bg-white px-3 py-2 border-b border-gray-200">
+          {/* Header con barra di ricerca e pulsante di chiusura */}
+          <div className="sticky top-0 z-50 bg-white px-3 py-3 border-b border-gray-200 flex flex-col">
+            {isMobile && (
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-medium text-gray-900">Seleziona una città</h3>
+                <button
+                  type="button"
+                  className="rounded-full p-2 inline-flex items-center justify-center text-gray-500 hover:text-gray-600 hover:bg-gray-100 focus:outline-none"
+                  onClick={handleCloseDropdown}
+                >
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            )}
             <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
               <input
                 ref={inputRef}
                 type="search"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-2.5 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 placeholder="Cerca città..."
                 value={searchQuery}
                 onChange={handleSearch}
@@ -237,10 +355,11 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
                     e.preventDefault();
                     e.stopPropagation();
                     setSearchQuery('');
+                    setFlatSearchResults([]);
                     inputRef.current?.focus();
                   }}
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
@@ -248,43 +367,48 @@ export default function CitySelect({ value, onChange, error }: CitySelectProps) 
             </div>
           </div>
 
-          <div className="overflow-y-auto" style={{ maxHeight: `${dropdownPosition.maxHeight - 60}px` }}>
-            {Object.entries(filteredCities).map(([province, provinceCities], provinceIndex) => (
-              <div key={province}>
-                <div className="sticky top-[60px] z-40 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
-                  Provincia di {province}
+          {/* Lista delle città */}
+          <div className={`overflow-y-auto ${isMobile ? 'flex-grow' : ''}`} style={{ maxHeight: isMobile ? 'none' : `${dropdownPosition.maxHeight - 70}px` }}>
+            {/* Mostra risultati di ricerca in formato piatto quando c'è una query di ricerca */}
+            {searchQuery && flatSearchResults.length > 0 && (
+              <div className="py-2">
+                <div className="sticky top-[60px] z-40 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 border-t border-b border-blue-200">
+                  Risultati di ricerca per "{searchQuery}"
                 </div>
-                {provinceCities.map((city) => (
-                  <div
-                    key={`${city.province}-${city.name}`}
-                    className={`cursor-pointer select-none relative py-3 pl-3 pr-9 hover:bg-blue-50 transition-colors duration-150 ${
-                      value === city.name ? 'bg-blue-100' : ''
-                    }`}
-                    onClick={(e) => handleCitySelection(city.name, e)}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className={`block truncate ${value === city.name ? 'font-medium' : 'font-normal'}`}>
-                        {city.name}
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        city.score >= 6 ? 'bg-green-100 text-green-800' : 
-                        city.score >= 3 ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {city.score} punti
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-
-            {Object.keys(filteredCities).length === 0 && (
-              <div className="text-center py-4 text-sm text-gray-500">
-                Nessuna città trovata
+                {flatSearchResults.map(city => renderCityItem(city))}
               </div>
             )}
+
+            {/* Mostra messaggio se non ci sono risultati */}
+            {searchQuery && flatSearchResults.length === 0 && (
+              <div className="text-center py-8 text-sm text-gray-500">
+                Nessuna città trovata per "{searchQuery}"
+              </div>
+            )}
+
+            {/* Mostra tutte le città raggruppate per provincia quando non c'è ricerca */}
+            {!searchQuery && Object.entries(groupedCities).map(([province, provinceCities], provinceIndex) => (
+              <div key={province}>
+                <div className="sticky top-[60px] z-40 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 border-t border-b border-gray-200">
+                  Provincia di {province}
+                </div>
+                {provinceCities.map(city => renderCityItem(city))}
+              </div>
+            ))}
           </div>
+          
+          {/* Footer con pulsante di chiusura su mobile */}
+          {isMobile && (
+            <div className="sticky bottom-0 z-50 bg-white px-3 py-3 border-t border-gray-200">
+              <button
+                type="button"
+                className="w-full bg-blue-600 text-white font-medium py-2.5 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={handleCloseDropdown}
+              >
+                Chiudi
+              </button>
+            </div>
+          )}
         </div>
       )}
       
