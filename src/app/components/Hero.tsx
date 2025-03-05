@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormModal from './form/FormModal';
 import AnimatedSection from './ui/AnimatedSection';
 import AnimatedButton from './ui/AnimatedButton';
@@ -7,12 +7,31 @@ import { motion } from 'framer-motion';
 
 export default function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cookieBannerHeight, setCookieBannerHeight] = useState(0);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  // Calcola l'altezza del banner dei cookie
+  useEffect(() => {
+    const cookieBanner = document.querySelector('[data-cookie-banner]');
+    if (cookieBanner) {
+      setCookieBannerHeight(cookieBanner.clientHeight);
+    }
+
+    // Aggiorna l'altezza se cambia la dimensione della finestra
+    const handleResize = () => {
+      if (cookieBanner) {
+        setCookieBannerHeight(cookieBanner.clientHeight);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <section className="relative bg-black overflow-hidden">
+    <section className="relative bg-black overflow-hidden" style={{ paddingTop: cookieBannerHeight > 0 ? `${cookieBannerHeight}px` : '0' }}>
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black/95 mix-blend-multiply" />
         <motion.div

@@ -19,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="it" className="h-full">
       <body className={`h-full antialiased`}>
-        {children}
         <CookieBanner />
-        <Footer />
+        <div className="min-h-screen flex flex-col">
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );
