@@ -112,24 +112,11 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
     const calculateScore = () => {
         let newScore = 0;
 
-        // Calcolo del punteggio basato sui dati del form
-        if (formData.investmentType === 'ampliamento') newScore += 20;
-        if (formData.investmentType === 'nuova_struttura') newScore += 15;
-        if (formData.investmentType === 'recupero_immobile') newScore += 25;
-
-        if (formData.investmentPurpose === 'enhanceTourism') newScore += 15;
-        if (formData.investmentPurpose === 'qualityStandards') newScore += 20;
-        if (formData.investmentPurpose === 'serviceImprovement') newScore += 25;
-
-        if (formData.expenseTypes.includes('propertyPurchase')) newScore += 10;
-        if (formData.expenseTypes.includes('construction')) newScore += 15;
-        if (formData.expenseTypes.includes('equipment')) newScore += 20;
-
-        // Aggiungo il punteggio del comune selezionato (0, 3 o 6 punti)
+        // Prendo solo il punteggio del comune selezionato (0, 3 o 6 punti)
         if (formData.localUnit?.municipality) {
             const selectedCity = cities.find(city => city.name === formData.localUnit?.municipality);
             if (selectedCity) {
-                newScore += selectedCity.score;
+                newScore = selectedCity.score;
                 console.log(`Punteggio comune ${selectedCity.name}: ${selectedCity.score}`);
             }
         }
