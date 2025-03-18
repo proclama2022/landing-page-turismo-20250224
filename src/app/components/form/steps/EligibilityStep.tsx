@@ -6,6 +6,8 @@ import { FormState } from '@/types/form';
 interface EligibilityStepProps {
   formData: FormState;
   updateFormData: (updates: Partial<FormState>) => void;
+  onChange?: (name: string, value: any) => void;
+  score?: number;
 }
 
 export default function EligibilityStep({ formData, updateFormData }: EligibilityStepProps) {

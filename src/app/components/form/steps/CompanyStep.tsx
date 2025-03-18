@@ -6,6 +6,8 @@ import { FormState, AtecoCode, CompanySize, ATECO_CODES } from '@/types/form';
 interface CompanyStepProps {
   formData: FormState;
   updateFormData: (updates: Partial<FormState>) => void;
+  onChange?: (name: string, value: any) => void;
+  score?: number;
 }
 
 const COMPANY_SIZES: { value: CompanySize; label: string }[] = [

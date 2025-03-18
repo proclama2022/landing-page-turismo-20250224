@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import PersonalInfoStep from './steps/PersonalInfoStep';
@@ -32,17 +32,80 @@ const STEPS: Step[] = [
     { id: 6, title: 'Conferma', component: FinalStep },
 ];
 
+// Funzione wrapper per serializzare onClose
+function FormModalWrapper({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    return <FormModal isOpen={isOpen} onClose={onClose} />;
+}
+
+// Funzione di validazione per ogni step
+const validateStep = (step: number, formData: FormState): string | null => {
+  switch (step) {
+    case 1: // PersonalInfoStep
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.discoveryChannel) {
+        return "Per favore compila tutti i campi personali (nome, cognome, email, telefono e come ci hai conosciuto)";
+      }
+      if (formData.discoveryChannel === 'other' && !formData.otherDiscoveryChannel) {
+        return "Per favore specifica come ci hai conosciuto";
+      }
+      break;
+    
+    case 2: // EligibilityStep
+      if (!formData.eligibility || 
+          formData.eligibility.isRegisteredOrWillBe === false ||
+          formData.eligibility.hadGrantRevocation === false ||
+          formData.eligibility.hasRelocated24Months === false ||
+          formData.eligibility.willNotRelocate24Months === false ||
+          formData.eligibility.isPartOfGroup === false) {
+        return "Per favore conferma tutti i requisiti di ammissibilità";
+      }
+      break;
+    
+    case 3: // CompanyStep
+      if (!formData.atecoCode) {
+        return "Per favore seleziona il codice ATECO dell'attività";
+      }
+      break;
+    
+    case 4: // LocationStep
+      if (!formData.localUnit?.municipality) {
+        return "Per favore seleziona il comune dell'unità locale";
+      }
+      break;
+    
+    case 5: // ProjectStep
+      if (!formData.investmentType || 
+          !formData.customInvestmentAmount || 
+          !formData.projectDescription ||
+          formData.expenseTypes.length === 0) {
+        return "Per favore compila tutti i dettagli del progetto (tipologia, importo, descrizione e tipologie di spesa)";
+      }
+      break;
+  }
+  return null;
+};
+
 export default function FormModal({ isOpen, onClose }: FormModalProps) {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
     const [score, setScore] = useState(0);
     const [errors, setErrors] = useState<Record<string, any>>({});
+    const [validationError, setValidationError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+
+    // Assicuriamoci che il componente sia montato prima di manipolare elementi DOM
+    const [isMounted, setIsMounted] = useState(false);
+    
+    // UseEffect per gestire il mounting del componente
+    useEffect(() => {
+        setIsMounted(true);
+        return () => setIsMounted(false);
+    }, []);
 
     // Funzione per gestire la chiusura del modale
     const handleClose = useCallback(() => {
-        if (typeof onClose === 'function') {
-            onClose();
-        }
+        onClose();
     }, [onClose]);
 
     const calculateScore = () => {
@@ -64,12 +127,85 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
         setScore(newScore);
     };
 
+    // Assicuriamoci di renderizzare solo lato client
+    if (!isMounted) {
+        return null;
+    }
+
+    // Funzione per inviare i dati a Make.com tramite webhook
+    const handleSubmit = async () => {
+        try {
+            setIsSubmitting(true);
+            setSubmitError(null);
+            
+            // Preparo i dati da inviare includendo il punteggio calcolato
+            const dataToSubmit = {
+                ...formData,
+                score,
+                submittedAt: new Date().toISOString()
+            };
+            
+            // URL del webhook Make.com
+            const webhookUrl = "https://hook.eu1.make.com/hxgdsajwaauweyku1h6nux6xh3ey0auy";
+            
+            // Invio i dati a Make.com
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSubmit),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Errore durante l'invio del form: ${response.status}`);
+            }
+            
+            // Gestisco la risposta positiva
+            setSubmitSuccess(true);
+            
+            // Mostro un messaggio di successo
+            alert("Grazie! Il tuo form è stato inviato con successo. Ti contatteremo presto.");
+            
+            // Chiudo il form dopo 2 secondi
+            setTimeout(() => {
+                onClose();
+                // Reset del form per futuri utilizzi
+                setFormData(DEFAULT_FORM_STATE);
+                setCurrentStep(1);
+                setScore(0);
+            }, 2000);
+            
+        } catch (error) {
+            console.error("Errore durante l'invio del form:", error);
+            setSubmitError("Si è verificato un errore durante l'invio del form. Riprova più tardi o contattaci direttamente.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleNext = () => {
+        // Verifica se tutti i campi obbligatori sono compilati
+        const error = validateStep(currentStep, formData);
+        
+        if (error) {
+            setValidationError(error);
+            // Mostro un alert per assicurarmi che l'utente veda l'errore
+            alert(error);
+            return;
+        }
+        
+        // Se non ci sono errori, procedo al prossimo step
+        setValidationError(null);
+        
         if (currentStep < STEPS.length) {
             setCurrentStep(currentStep + 1);
             if (currentStep === STEPS.length - 1) {
                 calculateScore();
             }
+        } else {
+            // Siamo all'ultimo step, invia il form
+            handleSubmit();
         }
     };
 
@@ -108,7 +244,7 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
-                        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl sm:max-w-lg max-h-[90vh]"
+                        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl sm:max-w-lg max-h-[90vh] flex flex-col"
                     >
                         <div className="flex justify-between items-center p-6 border-b border-gray-200">
                             <h2 className="text-2xl font-bold text-gray-900">
@@ -122,68 +258,131 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
                             </button>
                         </div>
 
-                        <div className="p-6">
+                        <div className="p-6 flex-1 overflow-y-auto">
                             <StepIndicator steps={STEPS} currentStep={currentStep} />
 
-                            <div className="mt-8 overflow-y-auto max-h-[calc(90vh-250px)]">
+                            {validationError && (
+                                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <p className="text-sm text-red-600 font-medium flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        {validationError}
+                                    </p>
+                                </div>
+                            )}
+
+                            {submitError && (
+                                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                    <p className="text-sm text-red-600 font-medium flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        {submitError}
+                                    </p>
+                                </div>
+                            )}
+
+                            {submitSuccess && (
+                                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <p className="text-sm text-green-600 font-medium flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                        Form inviato con successo! Grazie per la tua richiesta.
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="mt-8">
                                 {currentStep === 1 && (
-                                    <PersonalInfoStep formData={formData} updateFormData={updateFormData} />
+                                    <PersonalInfoStep 
+                                        formData={formData} 
+                                        updateFormData={updateFormData}
+                                        onChange={handleChange}
+                                    />
                                 )}
                                 {currentStep === 2 && (
-                                    <EligibilityStep formData={formData} updateFormData={updateFormData} />
+                                    <EligibilityStep 
+                                        formData={formData} 
+                                        updateFormData={updateFormData}
+                                        onChange={handleChange}
+                                    />
                                 )}
                                 {currentStep === 3 && (
-                                    <CompanyStep formData={formData} updateFormData={updateFormData} />
+                                    <CompanyStep 
+                                        formData={formData} 
+                                        updateFormData={updateFormData}
+                                        onChange={handleChange}
+                                    />
                                 )}
                                 {currentStep === 4 && (
                                     <LocationStep
                                         formData={formData}
                                         updateFormData={updateFormData}
                                         errors={errors}
+                                        onChange={handleChange}
                                     />
                                 )}
                                 {currentStep === 5 && (
                                     <ProjectStep
                                         formData={formData}
                                         onChange={handleChange}
+                                        updateFormData={updateFormData}
                                     />
                                 )}
                                 {currentStep === 6 && (
                                     <FinalStep
                                         formData={formData}
                                         updateFormData={updateFormData}
+                                        onChange={handleChange}
                                         score={score}
                                     />
                                 )}
-
-                                <div className="mt-8 flex justify-between">
-                                    {currentStep > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={handleBack}
-                                            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                                        >
-                                            Indietro
-                                        </button>
-                                    )}
-                                    {currentStep === 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={handleClose}
-                                            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                                        >
-                                            Annulla
-                                        </button>
-                                    )}
-                                    <button
-                                        type="button"
-                                        onClick={handleNext}
-                                        className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
-                                    >
-                                        {currentStep < STEPS.length ? 'Continua' : 'Invia'}
-                                    </button>
-                                </div>
                             </div>
+                        </div>
+                        
+                        {/* Pulsanti di navigazione fissati in basso */}
+                        <div className="p-6 border-t border-gray-200 flex justify-between">
+                            {currentStep > 1 && !isSubmitting && !submitSuccess && (
+                                <button
+                                    type="button"
+                                    onClick={handleBack}
+                                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    Indietro
+                                </button>
+                            )}
+                            {currentStep === 1 && !isSubmitting && !submitSuccess && (
+                                <button
+                                    type="button"
+                                    onClick={handleClose}
+                                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    Annulla
+                                </button>
+                            )}
+                            {!isSubmitting && !submitSuccess ? (
+                                <button
+                                    type="button"
+                                    onClick={handleNext}
+                                    className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+                                >
+                                    {currentStep < STEPS.length ? 'Continua' : 'Invia'}
+                                </button>
+                            ) : isSubmitting ? (
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg flex items-center"
+                                >
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Invio in corso...
+                                </button>
+                            ) : null}
                         </div>
                     </motion.div>
                 </motion.div>

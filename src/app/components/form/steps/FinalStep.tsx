@@ -7,6 +7,7 @@ interface FinalStepProps {
   formData: FormState;
   updateFormData: (updates: Partial<FormState>) => void;
   score: number;
+  onChange?: (name: string, value: any) => void;
 }
 
 export default function FinalStep({ formData, updateFormData, score }: FinalStepProps) {

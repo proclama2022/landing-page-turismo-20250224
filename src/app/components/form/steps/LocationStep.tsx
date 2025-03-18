@@ -9,12 +9,16 @@ interface LocationStepProps {
   formData: FormState;
   updateFormData: (updates: Partial<FormState>) => void;
   errors?: Record<string, any>;
+  onChange?: (name: string, value: any) => void;
+  score?: number;
 }
 
 export default function LocationStep({
   formData,
   updateFormData,
   errors = {},
+  onChange,
+  score,
 }: LocationStepProps) {
   const handleCitySelect = (cityName: string) => {
     const selectedCity = cities.find((city: City) => city.name === cityName);

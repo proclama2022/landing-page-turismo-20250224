@@ -21,6 +21,8 @@ interface ProjectStepProps {
     companySize?: string;
   };
   onChange: (name: string, value: any) => void;
+  updateFormData?: (updates: Partial<any>) => void;
+  score?: number;
 }
 
 const INVESTMENT_TYPES: { value: InvestmentType; label: string }[] = [
@@ -58,7 +60,7 @@ const EXPENSE_TYPES: {value: ExpenseType, label: string}[] = [
 const MIN_INVESTMENT = 62500;
 const MAX_INVESTMENT_FOR_FULL_CONTRIBUTION = 375000; // 300.000 / 0.8 = 375.000 (considerando l'80% di contributo)
 
-export default function ProjectStep({ formData, onChange }: ProjectStepProps) {
+export default function ProjectStep({ formData, onChange, updateFormData }: ProjectStepProps) {
   // Stato per gestire i messaggi di errore/avviso
   const [investmentError, setInvestmentError] = useState<string | null>(null);
   const [investmentWarning, setInvestmentWarning] = useState<string | null>(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
 import PersonalInfoStep from './steps/PersonalInfoStep';
 import EligibilityStep from './steps/EligibilityStep';
@@ -24,18 +24,110 @@ const STEPS = [
   { title: 'Conferma', component: FinalStep },
 ];
 
+// Funzione di validazione per ogni step
+const validateStep = (step: number, formData: FormState): string | null => {
+  switch (step) {
+    case 0: // PersonalInfoStep
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+        return "Per favore compila tutti i campi personali (nome, cognome, email e telefono)";
+      }
+      break;
+    
+    case 1: // EligibilityStep
+      if (!formData.eligibility || 
+          formData.eligibility.isRegisteredOrWillBe === undefined ||
+          formData.eligibility.hadGrantRevocation === undefined ||
+          formData.eligibility.hasRelocated24Months === undefined ||
+          formData.eligibility.willNotRelocate24Months === undefined ||
+          formData.eligibility.isPartOfGroup === undefined) {
+        return "Per favore rispondi a tutte le domande sui requisiti di ammissibilità";
+      }
+      break;
+    
+    case 2: // CompanyStep
+      if (!formData.atecoCode) {
+        return "Per favore seleziona il codice ATECO dell'attività";
+      }
+      break;
+    
+    case 3: // LocationStep
+      if (!formData.localUnit?.municipality) {
+        return "Per favore indica l'ubicazione dell'unità locale";
+      }
+      break;
+    
+    case 4: // ProjectStep
+      if (!formData.investmentType || 
+          !formData.investmentPurpose || 
+          !formData.projectDescription || 
+          !formData.projectLocation || 
+          !formData.projectDuration ||
+          !formData.totalAmount ||
+          !formData.fundingAmount ||
+          !formData.regimeType) {
+        return "Per favore compila tutti i dettagli del progetto e del budget";
+      }
+      break;
+    
+    case 5: // FinalStep
+      if (!formData.gdprConsent) {
+        return "Per favore accetta l'informativa sulla privacy per procedere";
+      }
+      break;
+  }
+  return null;
+};
+
 export function FormDialog({ isOpen, onClose }: FormDialogProps) {
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isStepValid, setIsStepValid] = useState(false);
 
-  const handleNext = () => {
+  // Forza la validazione all'apertura del form
+  useEffect(() => {
+    if (isOpen) {
+      const validationError = validateStep(currentStep, formData);
+      setIsStepValid(validationError === null);
+      setError(validationError);
+    }
+  }, [isOpen]);
+
+  // Verifica sempre la validità quando si cambia step
+  useEffect(() => {
+    const validationError = validateStep(currentStep, formData);
+    setIsStepValid(validationError === null);
+    setError(validationError);
+  }, [currentStep, formData]);
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault(); // Previene qualsiasi comportamento predefinito
+    e.stopPropagation(); // Ferma la propagazione dell'evento
+    
+    // Esegui la validazione in modo sincrono qui
+    const validationError = validateStep(currentStep, formData);
+    
+    // Se c'è un errore, mostralo e interrompi l'avanzamento
+    if (validationError) {
+      setError(validationError);
+      setIsStepValid(false);
+      alert(validationError); // Mostra un alert per essere certi che l'utente lo veda
+      return false; // Ritorna false per indicare che non è stato possibile avanzare
+    }
+    
+    // Avanza solo se non ci sono errori
+    setError(null);
+    setIsStepValid(true);
+    
     if (currentStep < STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(prev => prev + 1);
     } else {
       handleSubmit();
     }
+    
+    return true; // Ritorna true per indicare che l'avanzamento è avvenuto con successo
   };
 
   const handleBack = () => {
@@ -58,17 +150,29 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
   };
 
   const updateFormData = (updates: Partial<FormState>) => {
-    setFormData(prev => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       ...updates
-    }));
+    };
+    setFormData(newFormData);
+    
+    // Aggiungo validazione anche qui per la sicurezza
+    const validationError = validateStep(currentStep, newFormData);
+    setIsStepValid(validationError === null);
+    setError(validationError);
   };
 
   const handleFieldChange = (name: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       [name]: value
-    }));
+    };
+    setFormData(newFormData);
+    
+    // Valida immediatamente dopo la modifica di un campo
+    const validationError = validateStep(currentStep, newFormData);
+    setIsStepValid(validationError === null);
+    setError(validationError);
   };
 
   const calculateScore = useMemo(() => {
@@ -127,6 +231,12 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+              {error}
+            </div>
+          )}
+          
           <CurrentStepComponent
             formData={formData}
             updateFormData={updateFormData}
@@ -153,10 +263,34 @@ export function FormDialog({ isOpen, onClose }: FormDialogProps) {
                 Annulla
               </button>
             )}
+            
             <button
               type="button"
-              onClick={handleNext}
-              className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+              className={`px-6 py-2 rounded-lg ${
+                isStepValid
+                  ? 'bg-yellow-400 text-black hover:bg-yellow-500 transition-colors duration-200'
+                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              }`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Controlla nuovamente la validazione qui prima di chiamare handleNext
+                const validationError = validateStep(currentStep, formData);
+                if (validationError) {
+                  setError(validationError);
+                  setIsStepValid(false);
+                  alert(validationError);
+                  return;
+                }
+                
+                if (isStepValid) {
+                  handleNext(e);
+                } else {
+                  alert("Per favore compila tutti i campi obbligatori prima di continuare");
+                  setError("Per favore compila tutti i campi obbligatori prima di continuare");
+                }
+              }}
             >
               {currentStep < STEPS.length - 1 ? 'Continua' : 'Invia'}
             </button>

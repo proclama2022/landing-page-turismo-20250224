@@ -7,12 +7,14 @@ import FormField from '../FormField';
 interface PersonalInfoStepProps {
   formData: FormState;
   updateFormData: (updates: Partial<FormState>) => void;
+  onChange: (name: string, value: any) => void;
+  score?: number;
 }
 
-export default function PersonalInfoStep({ formData, updateFormData }: PersonalInfoStepProps) {
+export default function PersonalInfoStep({ formData, updateFormData, onChange }: PersonalInfoStepProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    updateFormData({ [name]: value });
+    onChange(name, value);
   };
 
   // Resetta il campo otherDiscoveryChannel quando l'utente cambia la selezione da "Altro"
