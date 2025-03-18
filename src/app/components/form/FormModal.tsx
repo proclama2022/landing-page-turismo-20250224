@@ -11,6 +11,7 @@ import ProjectStep from './steps/ProjectStep';
 import FinalStep from './steps/FinalStep';
 import StepIndicator from './StepIndicator';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
+import { cities } from '@/app/data/cityData';
     
 type FormModalProps = {
     isOpen: boolean;
@@ -124,7 +125,17 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
         if (formData.expenseTypes.includes('construction')) newScore += 15;
         if (formData.expenseTypes.includes('equipment')) newScore += 20;
 
+        // Aggiungo il punteggio del comune selezionato (0, 3 o 6 punti)
+        if (formData.localUnit?.municipality) {
+            const selectedCity = cities.find(city => city.name === formData.localUnit?.municipality);
+            if (selectedCity) {
+                newScore += selectedCity.score;
+                console.log(`Punteggio comune ${selectedCity.name}: ${selectedCity.score}`);
+            }
+        }
+
         setScore(newScore);
+        console.log(`Punteggio totale calcolato: ${newScore}`);
     };
 
     // Assicuriamoci di renderizzare solo lato client
