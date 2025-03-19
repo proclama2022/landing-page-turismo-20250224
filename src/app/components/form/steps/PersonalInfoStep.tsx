@@ -137,17 +137,17 @@ export default function PersonalInfoStep({ formData, updateFormData, onChange }:
           <div className="flex items-start">
             <div className="flex items-center h-5">
               <input
-                id="privacyConsent"
-                name="privacyConsent"
+                id="gdprConsent"
+                name="gdprConsent"
                 type="checkbox"
-                checked={formData.privacyConsent}
+                checked={formData.gdprConsent}
                 onChange={handleChange}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 required
               />
             </div>
             <div className="ml-3">
-              <label htmlFor="privacyConsent" className="text-sm text-gray-700">
+              <label htmlFor="gdprConsent" className="text-sm text-gray-700">
                 Ho letto e accetto la <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:text-blue-800 underline">Privacy Policy</a> <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-xs text-gray-500">
