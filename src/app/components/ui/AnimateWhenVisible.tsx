@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
 
 interface AnimateWhenVisibleProps {
@@ -12,9 +12,10 @@ interface AnimateWhenVisibleProps {
 
 const AnimateWhenVisible = ({ children, delay = 0, direction, className = "" }: AnimateWhenVisibleProps) => {
   const controls = useAnimation();
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
+  const ref = useRef(null);
+  const inView = useInView(ref, {
+    once: true,
+    amount: 0.1,
   });
 
   useEffect(() => {
