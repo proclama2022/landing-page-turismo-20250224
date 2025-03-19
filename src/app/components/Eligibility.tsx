@@ -1,10 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import AnimateWhenVisible from './AnimateWhenVisible';
+import FormModal from './form/FormModal';
 
 export default function Eligibility() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const requirements = [
     {
       icon: (
@@ -86,8 +92,8 @@ export default function Eligibility() {
                 Non sei sicuro di soddisfare tutti i requisiti? I nostri consulenti possono aiutarti a valutare la tua situazione e trovare soluzioni personalizzate.
               </p>
             </div>
-            <motion.a
-              href="#form"
+            <motion.button
+              onClick={openModal}
               className="inline-flex items-center px-8 py-4 bg-black text-white font-bold rounded-xl shadow-xl hover:shadow-2xl"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -97,10 +103,11 @@ export default function Eligibility() {
               <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </motion.a>
+            </motion.button>
           </div>
         </AnimateWhenVisible>
       </div>
     </section>
+    <FormModal isOpen={isModalOpen} onClose={closeModal} />
   );
 } 

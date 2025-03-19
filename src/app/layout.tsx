@@ -7,8 +7,16 @@ import CookieBanner from './components/CookieBanner';
 // const inter = Inter({ subsets: ['latin'] });
     
 export const metadata: Metadata = {
-  title: 'Bando Turismo Sicilia 2024',
+  title: 'Bando Turismo Sicilia 2025',
   description: 'Contributi a fondo perduto per le imprese turistiche siciliane',
+  icons: {
+    icon: [
+      {
+        url: '/images/logo_MAD_white-yellow-300x300-1-150x150.png',
+        type: 'image/png',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
