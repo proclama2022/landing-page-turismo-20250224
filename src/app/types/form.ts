@@ -21,4 +21,14 @@ export interface FormState {
   customInvestmentAmount?: number;
   projectDescription?: string;
   expenseTypes: string[];
-} 
+}
+
+export const DEFAULT_FORM_STATE: FormState = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  discoveryChannel: '',
+  privacyConsent: false,
+  expenseTypes: []
+}; 
