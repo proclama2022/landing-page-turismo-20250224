@@ -107,7 +107,7 @@ export default function Eligibility() {
           </div>
         </AnimateWhenVisible>
       </div>
+      <FormModal isOpen={isModalOpen} onClose={closeModal} />
     </section>
-    <FormModal isOpen={isModalOpen} onClose={closeModal} />
   );
 } 
