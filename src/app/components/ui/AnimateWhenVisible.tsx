@@ -6,29 +6,37 @@ import { motion, useAnimation, useInView } from 'framer-motion';
 interface AnimateWhenVisibleProps {
   children: React.ReactNode;
   delay?: number;
+  direction?: 'left' | 'right';
   className?: string;
 }
 
-const AnimateWhenVisible = ({ children, delay = 0, className = "" }: AnimateWhenVisibleProps) => {
+const AnimateWhenVisible = ({ children, delay = 0, direction, className = "" }: AnimateWhenVisibleProps) => {
   const controls = useAnimation();
-  const ref = React.useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
-  
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
   useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
+    if (inView) {
+      controls.start({
+        x: 0,
+        opacity: 1,
+        transition: {
+          duration: 0.5,
+          delay: delay,
+        },
+      });
     }
-  }, [controls, isInView]);
-  
+  }, [controls, inView, delay]);
+
+  const initialX = direction === 'left' ? -50 : direction === 'right' ? 50 : 0;
+
   return (
     <motion.div
       ref={ref}
-      initial="hidden"
+      initial={{ x: initialX, opacity: 0 }}
       animate={controls}
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay } }
-      }}
       className={className}
     >
       {children}

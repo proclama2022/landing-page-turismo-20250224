@@ -10,6 +10,7 @@ import AboutUs from './components/AboutUs';
 import BandoAreas from './components/Services';
 import Testimonials from './components/Testimonials';
 import ContactForm from './components/form/ContactForm';
+import Contact from './components/Contact';
 
 export default function Home() {
     useEffect(() => {
@@ -52,6 +53,7 @@ export default function Home() {
           <ContactForm />
         </div>
       </section>
+      <Contact />
     </main>
   );
 }
