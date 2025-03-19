@@ -14,7 +14,11 @@ interface PersonalInfoStepProps {
 export default function PersonalInfoStep({ formData, updateFormData, onChange }: PersonalInfoStepProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    onChange(name, value);
+    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+      onChange(name, e.target.checked);
+    } else {
+      onChange(name, value);
+    }
   };
 
   // Resetta il campo otherDiscoveryChannel quando l'utente cambia la selezione da "Altro"
@@ -136,8 +140,8 @@ export default function PersonalInfoStep({ formData, updateFormData, onChange }:
                 id="privacyConsent"
                 name="privacyConsent"
                 type="checkbox"
-                checked={formData.privacyConsent || false}
-                onChange={(e) => onChange('privacyConsent', e.target.checked)}
+                checked={formData.privacyConsent}
+                onChange={handleChange}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 required
               />
