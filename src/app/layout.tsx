@@ -28,6 +28,18 @@ export default function RootLayout({
   return (
     <html lang="it" className="h-full">
       <head>
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-744744589"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-744744589');
+            `
+          }}
+        />
       </head>
       <body className={`h-full antialiased ${inter.className}`}>
         <CookieBanner />

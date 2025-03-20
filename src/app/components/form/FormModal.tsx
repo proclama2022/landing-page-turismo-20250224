@@ -162,6 +162,12 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
             // Gestisco la risposta positiva
             setSubmitSuccess(true);
             
+            // Triggero l'evento di conversione Google Ads
+            if (typeof window !== 'undefined' && window.gtag) {
+                window.gtag('event', 'conversion', {'send_to': 'AW-744744589'});
+                console.log('Google Ads conversion tracked');
+            }
+            
             // Mostro un messaggio di successo
             alert("Grazie! Il tuo form è stato inviato con successo. Ti contatteremo presto.");
             
