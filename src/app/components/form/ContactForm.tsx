@@ -9,16 +9,49 @@ const ContactForm: React.FC = () => {
     email: '',
     telefono: '',
     messaggio: '',
+    gdprConsent: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Qui implementeremo la logica di invio del form
-    console.log('Form inviato:', formData);
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await fetch('https://hook.eu1.make.com/rpn58tmkybaba756zqlaieropz56db1c', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Errore nell\'invio del form');
+      }
+
+      setSubmitStatus('success');
+      setFormData({
+        nome: '',
+        email: '',
+        telefono: '',
+        messaggio: '',
+        gdprConsent: false,
+      });
+    } catch (error) {
+      console.error('Errore:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+    const target = e.target;
+    const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -94,12 +127,43 @@ const ContactForm: React.FC = () => {
           />
         </div>
 
-        <div className="flex justify-end">
+        <div className="form-field">
+          <div className="flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                id="gdprConsent"
+                name="gdprConsent"
+                type="checkbox"
+                checked={formData.gdprConsent}
+                onChange={handleChange}
+                className="h-4 w-4 text-yellow-400 focus:ring-yellow-400 border-white/20 rounded bg-white/10"
+                required
+              />
+            </div>
+            <div className="ml-3">
+              <label htmlFor="gdprConsent" className="text-sm text-white">
+                Ho letto e accetto la <a href="https://management-advisor.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 underline">Privacy Policy</a> <span className="text-red-500">*</span>
+              </label>
+              <p className="mt-1 text-xs text-gray-300">
+                I tuoi dati saranno trattati secondo la normativa vigente sulla privacy
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-end gap-4">
+          {submitStatus === 'success' && (
+            <p className="text-green-400 text-sm">Messaggio inviato con successo!</p>
+          )}
+          {submitStatus === 'error' && (
+            <p className="text-red-400 text-sm">Si è verificato un errore. Per favore riprova.</p>
+          )}
           <AnimatedButton
             type="submit"
-            className="bg-yellow-400 text-black font-semibold hover:bg-yellow-500"
+            className="bg-yellow-400 text-black font-semibold hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isSubmitting}
           >
-            Invia messaggio
+            {isSubmitting ? 'Invio in corso...' : 'Invia messaggio'}
           </AnimatedButton>
         </div>
       </form>
