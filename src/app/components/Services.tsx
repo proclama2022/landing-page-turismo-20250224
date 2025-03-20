@@ -23,7 +23,7 @@ export default function BandoAreas() {
 
   return (
     <>
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" ref={sectionRef}>
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" ref={sectionRef} id="bando-areas">
         <div className="container mx-auto px-4">
           <AnimateWhenVisible>
             <div className="text-center mb-16">
