@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimateWhenVisible from './AnimateWhenVisible';
+import Link from 'next/link';
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -14,11 +15,11 @@ export default function FAQ() {
       questions: [
         {
           q: "Chi può partecipare al Bando Turismo Sicilia 2025?",
-          a: "Possono partecipare le imprese di qualsiasi dimensione con sede legale o operativa in Sicilia, operanti nel settore turistico-ricettivo con codici ATECO specifici (55.10.00, 55.20.10, 55.20.20, 55.20.30, 55.20.51, 55.30)."
+          a: "Possono partecipare le imprese di qualsiasi dimensione con sede legale o operativa in Sicilia, operanti nel settore turistico-ricettivo con codici ATECO specifici (55.10.00, 55.20.10, 55.20.20, 55.20.30, 55.20.51, 55.30). Le imprese devono essere già costituite al momento della presentazione della domanda e dimostrare capacità di copertura finanziaria dell'investimento."
         },
         {
           q: "Qual è l'importo massimo finanziabile?",
-          a: "L'importo massimo finanziabile varia in base alla dimensione dell'impresa e alla tipologia di intervento. Il bando prevede contributi a fondo perduto fino al 65% delle spese ammissibili."
+          a: "Il bando prevede due regimi di aiuto: 1) Regime 'De Minimis': investimenti da €50.000 a €300.000, con copertura fino all'80% delle spese ammissibili. 2) Regime 'Esenzione': investimenti da €300.000,01 fino a €3.500.000, con copertura del 60% per micro e piccole imprese, 50% per medie imprese e 40% per grandi imprese."
         }
       ]
     },
@@ -27,11 +28,11 @@ export default function FAQ() {
       questions: [
         {
           q: "Quali spese sono ammissibili al finanziamento?",
-          a: "Sono ammissibili le spese per opere murarie, macchinari, impianti, attrezzature, arredi, software e servizi di consulenza. Tutte le spese devono essere direttamente correlate al progetto di investimento."
+          a: "Sono ammissibili: 1) Acquisto di immobili e opere edilizie (max 70% dell'investimento, di cui max 30% per suolo e immobili), 2) Macchinari, arredi e attrezzature nuove di fabbrica, 3) Programmi informatici e software (max 20% dell'investimento), 4) Consulenze specialistiche (max 2% dell'investimento), 5) Progettazione e direzione lavori (max 4% dell'investimento). Non sono ammissibili: macchinari e attrezzature usate, beni di importo inferiore a €500, spese interne."
         },
         {
-          q: "Quali sono i programmi di spesa agevolabili?",
-          a: "I programmi agevolabili includono ampliamento, ammodernamento e ristrutturazione di strutture esistenti, realizzazione di nuove strutture, recupero di immobili non ultimati e servizi funzionali collegati."
+          q: "Quali sono i criteri di valutazione del progetto?",
+          a: "I principali criteri sono: 1) Generazione di nuova occupazione, 2) Sostenibilità ambientale degli investimenti, 3) Localizzazione in aree rurali, isole minori o zone a bassa intensità ricettiva, 4) Percentuale di investimento in macchinari, impianti, attrezzature e arredi, 5) Recupero di immobili degradati o dismessi."
         }
       ]
     },
@@ -40,11 +41,11 @@ export default function FAQ() {
       questions: [
         {
           q: "Come avviene l'erogazione del contributo?",
-          a: "L'erogazione avviene in più tranche: un anticipo iniziale previa presentazione di fideiussione, stati di avanzamento lavori intermedi e saldo finale dopo la verifica della documentazione."
+          a: "L'erogazione avviene in più tranche: un anticipo iniziale previa presentazione di fideiussione, stati di avanzamento lavori intermedi e saldo finale dopo la verifica della documentazione. Tutti i pagamenti devono essere effettuati con modalità tracciabili."
         },
         {
-          q: "Qual è la durata massima del piano di investimento?",
-          a: "Il piano di investimento deve essere completato entro 24 mesi dalla data di concessione del contributo, salvo proroghe debitamente motivate e autorizzate."
+          q: "Quali sono i requisiti per partecipare?",
+          a: "I requisiti principali sono: 1) Sede legale o operativa in Sicilia, 2) Essere in regola con la normativa edilizia e urbanistica, 3) DURC regolare, 4) Rispetto dei requisiti antimafia, 5) Solidità economico-finanziaria dimostrabile anche tramite lettere di credenziali bancarie, 6) Non trovarsi in stato di difficoltà secondo la definizione UE."
         }
       ]
     }
@@ -177,27 +178,29 @@ export default function FAQ() {
                 I nostri consulenti sono a tua disposizione per fornirti tutte le informazioni necessarie
               </p>
             </div>
-            <motion.button
-              className="inline-flex items-center px-8 py-4 bg-black text-white font-bold rounded-xl shadow-xl hover:shadow-2xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-            >
-              Contattaci
-              <svg
-                className="w-6 h-6 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <Link href="#contact">
+              <motion.button
+                className="inline-flex items-center px-8 py-4 bg-black text-white font-bold rounded-xl shadow-xl hover:shadow-2xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-            </motion.button>
+                Contattaci
+                <svg
+                  className="w-6 h-6 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </motion.button>
+            </Link>
           </div>
         </AnimateWhenVisible>
       </div>
