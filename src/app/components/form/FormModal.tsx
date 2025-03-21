@@ -135,20 +135,49 @@ export default function FormModal() {
                 submittedAt: new Date().toISOString()
             };
             
+            // Log dei dati che stiamo per inviare
+            console.log('Dati che verranno inviati:', dataToSubmit);
+            
             // URL del webhook Make.com
             const webhookUrl = "https://hook.eu1.make.com/hxgdsajwaauweyku1h6nux6xh3ey0auy";
+            
+            console.log('Invio richiesta a:', webhookUrl);
             
             // Invio i dati a Make.com
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 },
                 body: JSON.stringify(dataToSubmit),
             });
             
+            console.log('Risposta ricevuta:', {
+                status: response.status,
+                statusText: response.statusText
+            });
+            
             if (!response.ok) {
-                throw new Error(`Errore durante l'invio del form: ${response.status}`);
+                // Prova a leggere il corpo dell'errore
+                let errorBody = '';
+                try {
+                    errorBody = await response.text();
+                    console.error('Corpo della risposta di errore:', errorBody);
+                } catch (e) {
+                    console.error('Impossibile leggere il corpo della risposta di errore');
+                }
+                
+                throw new Error(`Errore durante l'invio del form: ${response.status} ${response.statusText}. ${errorBody}`);
+            }
+            
+            // Prova a leggere la risposta
+            let responseData;
+            try {
+                responseData = await response.json();
+                console.log('Risposta completa:', responseData);
+            } catch (e) {
+                console.log('La risposta non contiene JSON valido');
             }
             
             // Gestisco la risposta positiva
@@ -172,9 +201,9 @@ export default function FormModal() {
                 setScore(0);
             }, 2000);
             
-        } catch (error) {
-            console.error("Errore durante l'invio del form:", error);
-            setSubmitError("Si è verificato un errore durante l'invio del form. Riprova più tardi o contattaci direttamente.");
+        } catch (error: any) {
+            console.error("Errore dettagliato durante l'invio del form:", error);
+            setSubmitError(`Si è verificato un errore durante l'invio del form: ${error.message}. Riprova più tardi o contattaci direttamente.`);
         } finally {
             setIsSubmitting(false);
         }

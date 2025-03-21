@@ -53,7 +53,7 @@ const WELCOME_MESSAGE: ChatMessage = {
 
 export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showInfo, setShowInfo] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     if (typeof window !== 'undefined') {
       const savedMessages = localStorage.getItem('chatMessages');
@@ -160,6 +160,15 @@ export default function ChatWindow() {
     };
   }, []);
 
+  // Effetto per mostrare il chatbot dopo 30 secondi
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowInfo(true);
+    }, 30000); // 30 secondi
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading) return;
@@ -263,208 +272,203 @@ export default function ChatWindow() {
     setIsOpen(false);
   };
 
+  const handleClose = () => {
+    setShowInfo(false);
+    localStorage.setItem('chatInteracted', 'true');
+  };
+
+  const handleChatButtonClick = () => {
+    setIsOpen(!isOpen);
+    setShowInfo(false);
+    localStorage.setItem('chatInteracted', 'true');
+  };
+
   return (
-    <>
+    <div className="fixed bottom-4 right-4 z-50">
       {showInfo && !isOpen && (
         <div className="chat-info-tooltip">
           <button 
             className="chat-info-close"
-            onClick={() => setShowInfo(false)}
+            onClick={handleClose}
             aria-label="Chiudi messaggio"
           >
             ×
           </button>
           <p>
-            <strong>Hai domande sul Bando Turismo?</strong> Il nostro assistente virtuale è qui per aiutarti! Clicca sull'icona della chat per ricevere risposte immediate su requisiti, scadenze e modalità di partecipazione.
+            <strong>Hai domande sul Bando Turismo?</strong> Il nostro assistente virtuale è qui per aiutarti!
           </p>
         </div>
       )}
 
-      <div className={`fixed bottom-4 right-4 z-50 ${isOpen ? 'w-full max-w-md' : 'w-auto'}`}>
-        {/* Chat label */}
-        <div className={`text-center mb-2 transition-opacity duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="flex flex-col items-center gap-2">
-            <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1.5 rounded-full shadow-sm border border-yellow-200">
-              Hai domande sul bando?
-            </span>
-            <button
-              onClick={clearAllData}
-              className="text-xs text-gray-500 hover:text-red-500 transition-colors duration-200 underline"
-            >
-              Cancella cronologia chat
-            </button>
-          </div>
-        </div>
-        {/* Chat button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`w-16 h-16 rounded-full bg-yellow-400 text-black shadow-xl hover:bg-yellow-500 flex items-center justify-center transition-all duration-300 transform ${isOpen ? 'rotate-180 scale-105' : 'animate__animated animate__pulse animate__infinite animate__slower'}`}
-          aria-label={isOpen ? "Chiudi chat" : "Apri chat"}
-          style={{boxShadow: '0 10px 25px -5px rgba(250, 204, 21, 0.5), 0 8px 10px -6px rgba(250, 204, 21, 0.3)'}}
-        >
-          {isOpen ? (
-            <IoMdClose className="w-7 h-7" />
-          ) : (
-            <IoMdChatbubbles className="w-7 h-7" />
-          )}
-        </button>
+      {/* Chat button */}
+      <button
+        onClick={handleChatButtonClick}
+        className={`w-14 h-14 md:w-16 md:h-16 rounded-full bg-yellow-400 text-black shadow-xl hover:bg-yellow-500 flex items-center justify-center transition-all duration-300 transform ${isOpen ? 'rotate-180 scale-105' : 'animate__animated animate__pulse animate__infinite animate__slower'}`}
+        aria-label={isOpen ? "Chiudi chat" : "Apri chat"}
+        style={{boxShadow: '0 10px 25px -5px rgba(250, 204, 21, 0.5), 0 8px 10px -6px rgba(250, 204, 21, 0.3)'}}
+      >
+        {isOpen ? (
+          <IoMdClose className="w-6 h-6 md:w-7 md:h-7" />
+        ) : (
+          <IoMdChatbubbles className="w-6 h-6 md:w-7 md:h-7" />
+        )}
+      </button>
 
-        {/* Chat window */}
-        {isOpen && (
+      {/* Chat window */}
+      {isOpen && (
+        <div 
+          className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] md:w-[400px] h-[80vh] md:h-[500px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-yellow-200 animate__animated animate__fadeInUp animate__faster"
+          style={{
+            maxWidth: '400px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+          }}
+        >
+          {/* Header */}
           <div 
-            className="absolute bottom-24 right-0 w-96 sm:w-[400px] h-[500px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-yellow-200 animate__animated animate__fadeInUp animate__faster"
-            style={{ 
-              maxWidth: 'calc(100vw - 2rem)',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' 
+            className="px-4 py-3 rounded-t-xl flex items-center justify-between"
+            style={{
+              background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+              color: '#000'
             }}
           >
-            {/* Header */}
-            <div 
-              className="px-4 py-3 rounded-t-xl flex items-center justify-between"
-              style={{
-                background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-                color: '#000'
-              }}
-            >
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <IoMdChatbubbles className="w-5 h-5" />
-                Assistente Turismo Sicilia
-              </h3>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={resetConversation}
-                  className="p-2 rounded-full hover:bg-black/10 transition-colors"
-                  aria-label="Riavvia conversazione"
-                  title="Riavvia conversazione"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                  </svg>
-                </button>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-full hover:bg-black/10 transition-colors"
-                  aria-label="Chiudi chat"
-                >
-                  <IoMdClose className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div 
-              ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto px-4 py-3 space-y-4"
-              style={{ background: 'linear-gradient(180deg, #fefefe 0%, #f9fafb 100%)' }}
-            >
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate__animated animate__fadeIn animate__faster`}
-                >
-                  <div
-                    className={`max-w-[85%] p-3 rounded-2xl ${
-                      message.role === 'user'
-                        ? 'rounded-tr-none bg-gradient-to-br from-yellow-400 to-yellow-500 text-black font-medium shadow-md'
-                        : 'rounded-tl-none bg-white text-gray-800 border border-gray-100 shadow-sm'
-                    }`}
-                    style={{
-                      boxShadow: message.role === 'user' 
-                        ? '0 4px 6px -1px rgba(250, 204, 21, 0.1), 0 2px 4px -1px rgba(250, 204, 21, 0.06)' 
-                        : '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
-                    }}
-                  >
-                    <p 
-                      className="text-sm whitespace-pre-wrap leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: message.content }}
-                    />
-                    {message.role === 'assistant' && message.id !== 'welcome' && (
-                      <div className="flex items-center space-x-2 mt-2 justify-end">
-                        <button
-                          onClick={() => handleFeedback(message.id, 'like')}
-                          className={`p-1 rounded-full transition-colors ${
-                            feedbackGiven[message.id] === 'like' 
-                              ? 'text-green-500 bg-green-50' 
-                              : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
-                          }`}
-                          disabled={!!feedbackGiven[message.id]}
-                          aria-label="Mi piace"
-                        >
-                          <FaRegThumbsUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(message.id, 'dislike')}
-                          className={`p-1 rounded-full transition-colors ${
-                            feedbackGiven[message.id] === 'dislike' 
-                              ? 'text-red-500 bg-red-50' 
-                              : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
-                          }`}
-                          disabled={!!feedbackGiven[message.id]}
-                          aria-label="Non mi piace"
-                        >
-                          <FaRegThumbsDown className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {currentStreamingMessage && (
-                <div className="flex justify-start animate__animated animate__fadeIn animate__faster">
-                  <div className="max-w-[85%] p-3 rounded-2xl rounded-tl-none shadow-sm bg-white text-gray-800 border border-gray-100">
-                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{currentStreamingMessage}</p>
-                    <div className="flex mt-1">
-                      <span className="inline-flex space-x-1">
-                        <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></span>
-                        <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '600ms' }}></span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} className="h-4" />
-            </div>
-
-            {/* Input */}
-            <div className="border-t border-gray-100 bg-white">
-              {suggestedQuestions.length > 0 && (
-                <div className="px-4 pt-3">
-                  <SuggestedQuestions 
-                    questions={suggestedQuestions} 
-                    onSelectQuestion={handleSelectSuggestedQuestion} 
-                  />
-                </div>
-              )}
-              <form onSubmit={handleSendMessage} className="p-3">
-                <div className="flex items-center space-x-2">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    placeholder="Scrivi un messaggio..."
-                    className="flex-1 p-3 border border-gray-200 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 text-sm placeholder-gray-500 shadow-inner"
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isLoading || !inputMessage.trim()}
-                    className="p-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black rounded-full hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 flex items-center justify-center shadow-md"
-                    aria-label="Invia messaggio"
-                  >
-                    {isLoading ? (
-                      <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <IoSend className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </form>
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <IoMdChatbubbles className="w-5 h-5" />
+              Assistente Turismo Sicilia
+            </h3>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={resetConversation}
+                className="p-2 rounded-full hover:bg-black/10 transition-colors"
+                aria-label="Riavvia conversazione"
+                title="Riavvia conversazione"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                </svg>
+              </button>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-full hover:bg-black/10 transition-colors"
+                aria-label="Chiudi chat"
+              >
+                <IoMdClose className="w-5 h-5" />
+              </button>
             </div>
           </div>
-        )}
-      </div>
-    </>
+
+          {/* Messages */}
+          <div 
+            ref={messagesContainerRef}
+            className="flex-1 overflow-y-auto px-4 py-3 space-y-4"
+            style={{ background: 'linear-gradient(180deg, #fefefe 0%, #f9fafb 100%)' }}
+          >
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate__animated animate__fadeIn animate__faster`}
+              >
+                <div
+                  className={`max-w-[85%] p-3 rounded-2xl ${
+                    message.role === 'user'
+                      ? 'rounded-tr-none bg-gradient-to-br from-yellow-400 to-yellow-500 text-black font-medium shadow-md'
+                      : 'rounded-tl-none bg-white text-gray-800 border border-gray-100 shadow-sm'
+                  }`}
+                  style={{
+                    boxShadow: message.role === 'user' 
+                      ? '0 4px 6px -1px rgba(250, 204, 21, 0.1), 0 2px 4px -1px rgba(250, 204, 21, 0.06)' 
+                      : '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
+                  }}
+                >
+                  <p 
+                    className="text-sm whitespace-pre-wrap leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: message.content }}
+                  />
+                  {message.role === 'assistant' && message.id !== 'welcome' && (
+                    <div className="flex items-center space-x-2 mt-2 justify-end">
+                      <button
+                        onClick={() => handleFeedback(message.id, 'like')}
+                        className={`p-1 rounded-full transition-colors ${
+                          feedbackGiven[message.id] === 'like' 
+                            ? 'text-green-500 bg-green-50' 
+                            : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
+                        }`}
+                        disabled={!!feedbackGiven[message.id]}
+                        aria-label="Mi piace"
+                      >
+                        <FaRegThumbsUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleFeedback(message.id, 'dislike')}
+                        className={`p-1 rounded-full transition-colors ${
+                          feedbackGiven[message.id] === 'dislike' 
+                            ? 'text-red-500 bg-red-50' 
+                            : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
+                        }`}
+                        disabled={!!feedbackGiven[message.id]}
+                        aria-label="Non mi piace"
+                      >
+                        <FaRegThumbsDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            {currentStreamingMessage && (
+              <div className="flex justify-start animate__animated animate__fadeIn animate__faster">
+                <div className="max-w-[85%] p-3 rounded-2xl rounded-tl-none shadow-sm bg-white text-gray-800 border border-gray-100">
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{currentStreamingMessage}</p>
+                  <div className="flex mt-1">
+                    <span className="inline-flex space-x-1">
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></span>
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '600ms' }}></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} className="h-4" />
+          </div>
+
+          {/* Input */}
+          <div className="border-t border-gray-100 bg-white">
+            {suggestedQuestions.length > 0 && (
+              <div className="px-4 pt-3">
+                <SuggestedQuestions 
+                  questions={suggestedQuestions} 
+                  onSelectQuestion={handleSelectSuggestedQuestion} 
+                />
+              </div>
+            )}
+            <form onSubmit={handleSendMessage} className="p-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  placeholder="Scrivi un messaggio..."
+                  className="flex-1 p-3 border border-gray-200 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400 text-sm placeholder-gray-500 shadow-inner"
+                  disabled={isLoading}
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !inputMessage.trim()}
+                  className="p-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black rounded-full hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 disabled:opacity-50 flex items-center justify-center shadow-md"
+                  aria-label="Invia messaggio"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <IoSend className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

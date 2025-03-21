@@ -495,47 +495,45 @@ input[type="number"] {
   will-change: transform; /* Ottimizza le animazioni */
 }
 
-/* Stili per il tooltip del chatbot */
+/* Stili per il chatbot */
 .chat-info-tooltip {
-  position: fixed;
-  bottom: 100px;
-  right: 20px;
-  background-color: white;
-  padding: 12px 16px;
+  position: relative;
+  padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: 250px;
-  z-index: 1000;
-  animation: slideIn 0.5s ease-out;
-  border: 2px solid #EAB308;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 200px;
+  animation: fadeInUp 0.4s ease-out;
+  border: 1px solid rgba(250, 204, 21, 0.8);
+  background-color: rgba(255, 255, 255, 0.98);
+  margin-bottom: 1rem;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.chat-info-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(250, 204, 21, 0.8);
 }
 
 .chat-info-tooltip p {
   margin: 0;
-  font-size: 0.95rem;
-  color: #1a1a1a;
+  font-size: 0.875rem;
   line-height: 1.4;
+  color: #1a1a1a;
 }
 
 .chat-info-close {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: #EAB308;
-  border: none;
-  width: 20px;
-  height: 20px;
+  top: -6px;
+  right: -6px;
+  background-color: white;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   color: black;
   font-size: 14px;
@@ -544,6 +542,81 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(250, 204, 21, 0.8);
+  transition: all 0.2s ease;
+}
+
+.chat-info-close:hover {
+  background-color: #facc15;
+  transform: scale(1.1);
+}
+
+.chat-button {
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 1px 4px rgba(250, 204, 21, 0.2);
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+.chat-button:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.chat-icon {
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stili responsive per mobile */
+@media (max-width: 768px) {
+  .chat-info-tooltip {
+    max-width: 160px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .chat-info-tooltip p {
+    font-size: 0.75rem;
+  }
+
+  .chat-info-close {
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+  }
+}
+
+/* Stili per schermi molto piccoli */
+@media (max-width: 360px) {
+  .chat-info-tooltip {
+    max-width: 140px;
+    padding: 5px 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .chat-info-tooltip p {
+    font-size: 0.7rem;
+  }
+
+  .chat-info-close {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+  }
 }
 
 /* Transizioni */
