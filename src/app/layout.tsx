@@ -9,6 +9,7 @@ import { ModalProvider } from './ModalContext';
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
+  preload: true,
 });
     
 export const metadata: Metadata = {
@@ -30,16 +31,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it" className="h-full">
+    <html lang="it" className={`h-full ${inter.className}`}>
       <head>
         {/* Script per la funzione globale openFormModalGlobal */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              window.openFormModalGlobal = function() {
-                const event = new CustomEvent('openFormModal');
-                window.dispatchEvent(event);
-                return false;
+              if (typeof window !== 'undefined') {
+                window.openFormModalGlobal = function() {
+                  const event = new CustomEvent('openFormModal');
+                  window.dispatchEvent(event);
+                  return false;
+                }
               }
             `
           }}
@@ -84,15 +87,15 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`h-full antialiased ${inter.className}`}>
+      <body className="h-full antialiased">
         <CookieBanner />
         <ModalProvider>
           <div className="min-h-screen flex flex-col">
             {children}
             <Footer />
           </div>
+          <ChatWindow />
         </ModalProvider>
-        <ChatWindow />
       </body>
     </html>
   );

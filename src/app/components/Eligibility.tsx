@@ -1,15 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import AnimateWhenVisible from './AnimateWhenVisible';
 import FormModal from './form/FormModal';
+import { useModal } from '@/app/ModalContext';
 
 export default function Eligibility() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const { openModal } = useModal();
 
   const requirements = [
     {
@@ -107,7 +105,7 @@ export default function Eligibility() {
           </div>
         </AnimateWhenVisible>
       </div>
-      <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      <FormModal />
     </section>
   );
 } 
