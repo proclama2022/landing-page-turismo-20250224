@@ -28,7 +28,20 @@ export default function RootLayout({
   return (
     <html lang="it" className="h-full">
       <head>
-        {/* Google tag (gtag.js) */}
+        {/* Google Analytics tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GCHXJ7JPEH"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-GCHXJ7JPEH');
+            `
+          }}
+        />
+        
+        {/* Google Ads tag (gtag.js) */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=AW-744744589"></script>
         <script
           dangerouslySetInnerHTML={{
