@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import FormModal from './form/FormModal';
 import AnimatedSection from './ui/AnimatedSection';
 import AnimatedButton from './ui/AnimatedButton';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useModal } from '@/app/ModalContext';
 
 export default function Hero() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const { openModal } = useModal();
 
   return (
     <section className="relative bg-black overflow-hidden">
@@ -99,7 +97,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      <FormModal />
     </section>
   );
 } 

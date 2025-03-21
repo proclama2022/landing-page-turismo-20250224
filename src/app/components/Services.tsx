@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import AnimateWhenVisible from './ui/AnimateWhenVisible';
 import FormModal from './form/FormModal';
+import { useModal } from '@/app/ModalContext';
 
 export default function BandoAreas() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const { openModal } = useModal();
 
   // Assicura che la sezione non causi uno scroll automatico all'avvio
   useEffect(() => {
@@ -191,7 +189,7 @@ export default function BandoAreas() {
           </AnimateWhenVisible>
         </div>
       </section>
-      <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      <FormModal />
     </>
   );
 } 

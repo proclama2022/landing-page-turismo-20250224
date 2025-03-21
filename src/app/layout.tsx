@@ -4,12 +4,16 @@ import './globals.css';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import ChatWindow from '@/components/ChatWindow';
+import { ModalProvider } from './ModalContext';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
     
 export const metadata: Metadata = {
   title: 'Bando Turismo Sicilia 2025',
-  description: 'Contributi a fondo perduto per le imprese turistiche siciliane',
+  description: 'Informazioni e assistenza per il Bando Turismo Sicilia 2025',
   icons: {
     icon: [
       {
@@ -28,6 +32,19 @@ export default function RootLayout({
   return (
     <html lang="it" className="h-full">
       <head>
+        {/* Script per la funzione globale openFormModalGlobal */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.openFormModalGlobal = function() {
+                const event = new CustomEvent('openFormModal');
+                window.dispatchEvent(event);
+                return false;
+              }
+            `
+          }}
+        />
+
         {/* Microsoft Clarity */}
         <script
           dangerouslySetInnerHTML={{
@@ -69,10 +86,12 @@ export default function RootLayout({
       </head>
       <body className={`h-full antialiased ${inter.className}`}>
         <CookieBanner />
-        <div className="min-h-screen flex flex-col">
-          {children}
-          <Footer />
-        </div>
+        <ModalProvider>
+          <div className="min-h-screen flex flex-col">
+            {children}
+            <Footer />
+          </div>
+        </ModalProvider>
         <ChatWindow />
       </body>
     </html>

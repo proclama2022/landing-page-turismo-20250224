@@ -479,3 +479,54 @@ input[type="number"] {
   backface-visibility: hidden; /* Migliora le performance */
   will-change: transform; /* Ottimizza le animazioni */
 }
+
+/* Stili per il tooltip del chatbot */
+.chat-info-tooltip {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  background-color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 250px;
+  z-index: 1000;
+  animation: slideIn 0.5s ease-out;
+  border: 2px solid #EAB308;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.chat-info-tooltip p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.chat-info-close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #EAB308;
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

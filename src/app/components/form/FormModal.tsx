@@ -12,12 +12,8 @@ import FinalStep from './steps/FinalStep';
 import StepIndicator from './StepIndicator';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
 import { cities } from '@/app/data/cityData';
+import { useModal } from '@/app/ModalContext';
     
-type FormModalProps = {
-    isOpen: boolean;
-    onClose: () => void;
-}
-
 interface Step {
     id: number;
     title: string;
@@ -32,11 +28,6 @@ const STEPS: Step[] = [
     { id: 5, title: 'Dettagli investimento', component: ProjectStep },
     { id: 6, title: 'Conferma', component: FinalStep },
 ];
-
-// Funzione wrapper per serializzare onClose
-function FormModalWrapper({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-    return <FormModal isOpen={isOpen} onClose={onClose} />;
-}
 
 // Funzione di validazione per ogni step
 const validateStep = (step: number, formData: FormState): string | null => {
@@ -85,7 +76,8 @@ const validateStep = (step: number, formData: FormState): string | null => {
   return null;
 };
 
-export default function FormModal({ isOpen, onClose }: FormModalProps) {
+export default function FormModal() {
+    const { isModalOpen, closeModal } = useModal();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<FormState>(DEFAULT_FORM_STATE);
     const [score, setScore] = useState(0);
@@ -106,8 +98,8 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
 
     // Funzione per gestire la chiusura del modale
     const handleClose = useCallback(() => {
-        onClose();
-    }, [onClose]);
+        closeModal();
+    }, [closeModal]);
 
     const calculateScore = () => {
         let newScore = 0;
@@ -173,7 +165,7 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
             
             // Chiudo il form dopo 2 secondi
             setTimeout(() => {
-                onClose();
+                closeModal();
                 // Reset del form per futuri utilizzi
                 setFormData(DEFAULT_FORM_STATE);
                 setCurrentStep(1);
@@ -233,164 +225,153 @@ export default function FormModal({ isOpen, onClose }: FormModalProps) {
         }));
     };
 
-    if (!isOpen) return null;
+    if (!isModalOpen) return null;
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-x-hidden"
-                >
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl sm:max-w-lg max-h-[90vh] flex flex-col"
-                    >
-                        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                            <h2 className="text-2xl font-bold text-gray-900">
-                                {STEPS.find(step => step.id === currentStep)?.title || 'Form'}
-                            </h2>
-                            <button
-                                onClick={handleClose}
-                                className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                            >
-                                <XMarkIcon className="h-6 w-6" />
-                            </button>
-                        </div>
+        <div className="fixed inset-0 z-[9999] overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeModal} />
+                <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                        <h2 className="text-2xl font-bold text-gray-900">
+                            {STEPS.find(step => step.id === currentStep)?.title || 'Form'}
+                        </h2>
+                        <button
+                            onClick={handleClose}
+                            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                        >
+                            <XMarkIcon className="h-6 w-6" />
+                        </button>
+                    </div>
 
-                        <div className="p-6 flex-1 overflow-y-auto">
-                            <StepIndicator steps={STEPS} currentStep={currentStep} />
+                    <div className="p-6 flex-1 overflow-y-auto">
+                        <StepIndicator steps={STEPS} currentStep={currentStep} />
 
-                            {validationError && (
-                                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                    <p className="text-sm text-red-600 font-medium flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                        </svg>
-                                        {validationError}
-                                    </p>
-                                </div>
-                            )}
-
-                            {submitError && (
-                                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                    <p className="text-sm text-red-600 font-medium flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                        </svg>
-                                        {submitError}
-                                    </p>
-                                </div>
-                            )}
-
-                            {submitSuccess && (
-                                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                    <p className="text-sm text-green-600 font-medium flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        Form inviato con successo! Grazie per la tua richiesta.
-                                    </p>
-                                </div>
-                            )}
-
-                            <div className="mt-8">
-                                {currentStep === 1 && (
-                                    <PersonalInfoStep 
-                                        formData={formData} 
-                                        updateFormData={updateFormData}
-                                        onChange={handleChange}
-                                    />
-                                )}
-                                {currentStep === 2 && (
-                                    <EligibilityStep 
-                                        formData={formData} 
-                                        updateFormData={updateFormData}
-                                        onChange={handleChange}
-                                    />
-                                )}
-                                {currentStep === 3 && (
-                                    <CompanyStep 
-                                        formData={formData} 
-                                        updateFormData={updateFormData}
-                                        onChange={handleChange}
-                                    />
-                                )}
-                                {currentStep === 4 && (
-                                    <LocationStep
-                                        formData={formData}
-                                        updateFormData={updateFormData}
-                                        errors={errors}
-                                        onChange={handleChange}
-                                    />
-                                )}
-                                {currentStep === 5 && (
-                                    <ProjectStep
-                                        formData={formData}
-                                        onChange={handleChange}
-                                        updateFormData={updateFormData}
-                                    />
-                                )}
-                                {currentStep === 6 && (
-                                    <FinalStep
-                                        formData={formData}
-                                        updateFormData={updateFormData}
-                                        onChange={handleChange}
-                                        score={score}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        
-                        {/* Pulsanti di navigazione fissati in basso */}
-                        <div className="p-6 border-t border-gray-200 flex justify-between">
-                            {currentStep > 1 && !isSubmitting && !submitSuccess && (
-                                <button
-                                    type="button"
-                                    onClick={handleBack}
-                                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                                >
-                                    Indietro
-                                </button>
-                            )}
-                            {currentStep === 1 && !isSubmitting && !submitSuccess && (
-                                <button
-                                    type="button"
-                                    onClick={handleClose}
-                                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                                >
-                                    Annulla
-                                </button>
-                            )}
-                            {!isSubmitting && !submitSuccess ? (
-                                <button
-                                    type="button"
-                                    onClick={handleNext}
-                                    className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
-                                >
-                                    {currentStep < STEPS.length ? 'Continua' : 'Invia'}
-                                </button>
-                            ) : isSubmitting ? (
-                                <button
-                                    type="button"
-                                    disabled
-                                    className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg flex items-center"
-                                >
-                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        {validationError && (
+                            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600 font-medium flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
-                                    Invio in corso...
-                                </button>
-                            ) : null}
+                                    {validationError}
+                                </p>
+                            </div>
+                        )}
+
+                        {submitError && (
+                            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600 font-medium flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {submitError}
+                                </p>
+                            </div>
+                        )}
+
+                        {submitSuccess && (
+                            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                <p className="text-sm text-green-600 font-medium flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    Form inviato con successo! Grazie per la tua richiesta.
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="mt-8">
+                            {currentStep === 1 && (
+                                <PersonalInfoStep 
+                                    formData={formData} 
+                                    updateFormData={updateFormData}
+                                    onChange={handleChange}
+                                />
+                            )}
+                            {currentStep === 2 && (
+                                <EligibilityStep 
+                                    formData={formData} 
+                                    updateFormData={updateFormData}
+                                    onChange={handleChange}
+                                />
+                            )}
+                            {currentStep === 3 && (
+                                <CompanyStep 
+                                    formData={formData} 
+                                    updateFormData={updateFormData}
+                                    onChange={handleChange}
+                                />
+                            )}
+                            {currentStep === 4 && (
+                                <LocationStep
+                                    formData={formData}
+                                    updateFormData={updateFormData}
+                                    errors={errors}
+                                    onChange={handleChange}
+                                />
+                            )}
+                            {currentStep === 5 && (
+                                <ProjectStep
+                                    formData={formData}
+                                    onChange={handleChange}
+                                    updateFormData={updateFormData}
+                                />
+                            )}
+                            {currentStep === 6 && (
+                                <FinalStep
+                                    formData={formData}
+                                    updateFormData={updateFormData}
+                                    onChange={handleChange}
+                                    score={score}
+                                />
+                            )}
                         </div>
-                    </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                    </div>
+                    
+                    {/* Pulsanti di navigazione fissati in basso */}
+                    <div className="p-6 border-t border-gray-200 flex justify-between">
+                        {currentStep > 1 && !isSubmitting && !submitSuccess && (
+                            <button
+                                type="button"
+                                onClick={handleBack}
+                                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            >
+                                Indietro
+                            </button>
+                        )}
+                        {currentStep === 1 && !isSubmitting && !submitSuccess && (
+                            <button
+                                type="button"
+                                onClick={handleClose}
+                                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            >
+                                Annulla
+                            </button>
+                        )}
+                        {!isSubmitting && !submitSuccess ? (
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+                            >
+                                {currentStep < STEPS.length ? 'Continua' : 'Invia'}
+                            </button>
+                        ) : isSubmitting ? (
+                            <button
+                                type="button"
+                                disabled
+                                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg flex items-center"
+                            >
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Invio in corso...
+                            </button>
+                        ) : null}
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
