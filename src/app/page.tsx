@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import Eligibility from './components/Eligibility';
 import FAQ from './components/FAQ';
 import CallToAction from './components/CallToAction';
-import SecondCallToAction from './components/SecondCallToAction';
+import { SecondCallToAction } from './components/SecondCallToAction';
 import AboutUs from './components/AboutUs';
 import BandoAreas from './components/Services';
 import Testimonials from './components/Testimonials';

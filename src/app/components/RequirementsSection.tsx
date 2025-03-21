@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FormModal from './form/FormModal';
+import { useModal } from '@/app/ModalContext';
 
 export function RequirementsSection() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const { openModal } = useModal();
 
   const requirements = [
     {
@@ -114,7 +112,7 @@ export function RequirementsSection() {
           </div>
         </div>
       </div>
-      <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      <FormModal />
     </>
   );
 }
