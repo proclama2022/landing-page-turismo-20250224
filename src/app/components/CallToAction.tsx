@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import AnimatedSection from './ui/AnimatedSection';
 import AnimatedButton from './ui/AnimatedButton';
 import { motion } from 'framer-motion';
 import FormModal from './form/FormModal';
 import Image from 'next/image';
+import { useModal } from '@/app/ModalContext';
 
 export default function CallToAction() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const { openModal } = useModal();
 
   return (
     <>
@@ -130,7 +128,7 @@ export default function CallToAction() {
           </div>
         </div>
       </section>
-      <FormModal isOpen={isModalOpen} onClose={closeModal} />
+      <FormModal />
     </>
   );
 } 
