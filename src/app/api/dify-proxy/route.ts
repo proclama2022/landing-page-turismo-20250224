@@ -13,20 +13,28 @@ export async function POST(request: NextRequest) {
     const headers: HeadersInit = {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': payload?.response_mode === 'streaming' ? 'text/event-stream' : 'application/json'
     };
+
+    if (payload?.stream) {
+      headers['X-Use-Stream'] = 'true';
+    }
     
     const response = await fetch(url, {
       method: method || 'POST',
       headers,
       body: payload ? JSON.stringify(payload) : undefined
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     
     if (method === 'GET' || !payload?.response_mode || payload?.response_mode === 'blocking') {
       const data = await response.json();
       return NextResponse.json(data);
     } else {
-      // For streaming responses, we need to forward the response as a stream
+      // Per le risposte in streaming
       const readableStream = response.body;
       if (!readableStream) {
         throw new Error('Response body is null');
@@ -35,8 +43,10 @@ export async function POST(request: NextRequest) {
       return new NextResponse(readableStream, {
         headers: {
           'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive'
+          'Cache-Control': 'no-cache, no-transform',
+          'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no',
+          'Transfer-Encoding': 'chunked'
         }
       });
     }

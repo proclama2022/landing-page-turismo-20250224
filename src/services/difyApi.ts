@@ -73,7 +73,9 @@ export class DifyService {
         query: message,
         response_mode: onChunk ? "streaming" : "blocking",
         conversation_id: conversationId,
-        user: "website-user"
+        user: "website-user",
+        stream: true,
+        streaming_function_call: true
       };
 
       const response = await fetch(this.proxyUrl, {
@@ -98,7 +100,6 @@ export class DifyService {
       }
 
       if (onChunk) {
-        // Gestione dello streaming
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -116,13 +117,14 @@ export class DifyService {
             }
 
             const chunk = decoder.decode(value, { stream: true });
-            console.log('Received chunk:', chunk);
+            console.log('Received raw chunk:', chunk);
             
             buffer += chunk;
             const lines = buffer.split('\n');
             buffer = lines.pop() || '';
 
             for (const line of lines) {
+              if (line.trim() === '') continue;
               if (line.startsWith('data: ')) {
                 try {
                   const chunkData = JSON.parse(line.slice(6)) as StreamChunk;
@@ -142,7 +144,6 @@ export class DifyService {
         }
         return null;
       } else {
-        // Modalità blocking
         const data = await response.json() as DifyResponse;
         console.log('Blocking mode response:', data);
         return data;
