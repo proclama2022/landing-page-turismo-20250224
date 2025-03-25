@@ -6,6 +6,7 @@ import PersonalInfoStep from './steps/PersonalInfoStep';
 import ProjectStep from './steps/ProjectStep';
 import AdditionalInfoStep from './steps/AdditionalInfoStep';
 import { X } from 'lucide-react';
+import { trackFacebookEvent } from '@/utils/analytics';
 
 interface FormDrawerProps {
   isOpen: boolean;
@@ -17,9 +18,7 @@ const initialFormState: FormState = {
   lastName: '',
   email: '',
   phone: '',
-  company: {
-    companyName: ''
-  },
+  companyName: '',
   vatNumber: '',
   contact: {
     name: '',
@@ -105,6 +104,14 @@ export default function FormDrawer({ isOpen, onClose }: FormDrawerProps) {
       // Simulazione di invio dati
       await new Promise((resolve) => setTimeout(resolve, 1500));
       console.log('Form submitted:', formData);
+      
+      // Triggero l'evento di conversione Facebook
+      trackFacebookEvent('Lead', {
+        content_name: 'Form Bando Turismo Drawer',
+        status: 'submitted'
+      });
+      console.log('Facebook Lead conversion tracked');
+
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);

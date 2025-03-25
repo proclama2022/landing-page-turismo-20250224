@@ -55,12 +55,13 @@ const documentValidations: DocumentValidation[] = [
   }
 ];
 
-export const validateCompanyInfo = (formData: Pick<FormState, 'vatNumber' | 'atecoCode' | 'companySize'> & { company?: { companyName?: string } }): string[] => {
+export const validateCompanyInfo = (formData: Pick<FormState, 'vatNumber' | 'atecoCode' | 'companySize' | 'companyName'>): string[] => {
   const errors: string[] = [];
 
   if (!formData.vatNumber) errors.push('Partita IVA è obbligatoria');
   if (!formData.atecoCode) errors.push('Codice ATECO è obbligatorio');
   if (!formData.companySize) errors.push('Dimensione azienda è obbligatoria');
+  if (!formData.companyName) errors.push('Nome azienda è obbligatorio');
 
   return errors;
 };
@@ -149,7 +150,12 @@ export const validateStep = (step: number, formData: FormState): string[] => {
 
   switch (step) {
     case 0: // Company Info
-      errors.push(...validateCompanyInfo({ ...formData.company, vatNumber: formData.vatNumber, atecoCode: formData.atecoCode, companySize: formData.companySize }));
+      errors.push(...validateCompanyInfo({ 
+        vatNumber: formData.vatNumber, 
+        atecoCode: formData.atecoCode, 
+        companySize: formData.companySize,
+        companyName: formData.companyName 
+      }));
       break;
 
     case 1: // Eligibility
@@ -161,7 +167,12 @@ export const validateStep = (step: number, formData: FormState): string[] => {
       break;
       
     case 3: // Company Info
-      errors.push(...validateCompanyInfo({ ...formData.company, vatNumber: formData.vatNumber, atecoCode: formData.atecoCode, companySize: formData.companySize }));
+      errors.push(...validateCompanyInfo({ 
+        vatNumber: formData.vatNumber, 
+        atecoCode: formData.atecoCode, 
+        companySize: formData.companySize,
+        companyName: formData.companyName 
+      }));
       break;
 
     case 4: // Project Details
@@ -181,7 +192,12 @@ export const validateStep = (step: number, formData: FormState): string[] => {
 
 export const canSubmitForm = (formData: FormState): boolean => {
   const allValidations = [
-    ...validateCompanyInfo({ ...formData.company, vatNumber: formData.vatNumber, atecoCode: formData.atecoCode, companySize: formData.companySize }),
+    ...validateCompanyInfo({ 
+      vatNumber: formData.vatNumber, 
+      atecoCode: formData.atecoCode, 
+      companySize: formData.companySize,
+      companyName: formData.companyName 
+    }),
     ...validateEligibility(formData.eligibility),
     ...validateRequirements(formData.requirements),
     ...validateProjectDetails(formData),

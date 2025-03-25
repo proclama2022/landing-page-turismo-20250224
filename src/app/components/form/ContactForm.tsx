@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import AnimatedButton from '../ui/AnimatedButton';
+import { trackFacebookEvent } from '@/utils/analytics';
 
 const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +32,13 @@ const ContactForm: React.FC = () => {
       if (!response.ok) {
         throw new Error('Errore nell\'invio del form');
       }
+
+      // Triggero l'evento di conversione Facebook
+      trackFacebookEvent('Lead', {
+        content_name: 'Contact Form Bando Turismo',
+        status: 'submitted'
+      });
+      console.log('Facebook Lead conversion tracked');
 
       setSubmitStatus('success');
       setFormData({

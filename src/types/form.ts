@@ -111,12 +111,10 @@ export interface FormState {
   phone: string;
 
   // Informazioni aziendali
-  company?: {
-    companyName?: string;
-  };
+  companyName: string;
   vatNumber: string;
   constitutionDate?: string;
-    atecoCode?: AtecoCode;
+  atecoCode?: AtecoCode;
   companySize?: CompanySize;
   
   // Informazioni di contatto
@@ -167,7 +165,7 @@ export const DEFAULT_FORM_STATE: FormState = {
   lastName: '',
   email: '',
   phone: '',
-  company: {},
+  companyName: '',
   vatNumber: '',
   contact: {
     name: '',

@@ -30,13 +30,14 @@ export default function CompanyStep({ formData, updateFormData }: CompanyStepPro
         <h2 className="text-xl font-bold mb-4">Anagrafica Aziendale</h2>
       <div>
         <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
-          Nome azienda
+          Nome azienda *
         </label>
         <input
           type="text"
           id="companyName"
           name="companyName"
-          value={formData.company?.companyName}
+          required
+          value={formData.companyName}
           onChange={handleChange}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
           placeholder="Nome azienda"

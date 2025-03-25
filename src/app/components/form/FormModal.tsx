@@ -13,6 +13,7 @@ import StepIndicator from './StepIndicator';
 import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
 import { cities } from '@/app/data/cityData';
 import { useModal } from '@/app/ModalContext';
+import { trackFacebookEvent } from '@/utils/analytics';
     
 interface Step {
     id: number;
@@ -132,7 +133,8 @@ export default function FormModal() {
             const dataToSubmit = {
                 ...formData,
                 score,
-                submittedAt: new Date().toISOString()
+                submittedAt: new Date().toISOString(),
+                companyName: formData.companyName || ''
             };
             
             // Log dei dati che stiamo per inviare
@@ -188,6 +190,13 @@ export default function FormModal() {
                 window.gtag('event', 'conversion', {'send_to': 'AW-744744589'});
                 console.log('Google Ads conversion tracked');
             }
+
+            // Triggero l'evento di conversione Facebook
+            trackFacebookEvent('Lead', {
+                content_name: 'Form Bando Turismo',
+                status: 'submitted'
+            });
+            console.log('Facebook Lead conversion tracked');
             
             // Mostro un messaggio di successo
             alert("Grazie! Il tuo form è stato inviato con successo. Ti contatteremo presto.");
