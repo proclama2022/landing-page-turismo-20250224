@@ -14,7 +14,8 @@ import { FormState, DEFAULT_FORM_STATE } from '@/types/form';
 import { cities } from '@/app/data/cityData';
 import { useModal } from '@/app/ModalContext';
 import { trackFacebookEvent } from '@/utils/analytics';
-    
+import { event as trackGoogleEvent } from '@/components/GoogleAnalytics'; // Import the event function
+
 interface Step {
     id: number;
     title: string;
@@ -184,13 +185,11 @@ export default function FormModal() {
             
             // Gestisco la risposta positiva
             setSubmitSuccess(true);
-            
-            // Triggero l'evento di conversione Google Ads
-            if (typeof window !== 'undefined' && window.gtag) {
-                window.gtag('event', 'conversion', {'send_to': 'AW-744744589'});
-                console.log('Google Ads conversion tracked');
-            }
 
+            // Trigger Google Ads conversion event using the helper function
+            trackGoogleEvent({ action: 'generate_lead', category: 'FormSubmit', label: 'BandoTurismoLead' });
+            console.log('Google Analytics conversion event tracked');
+            
             // Triggero l'evento di conversione Facebook
             trackFacebookEvent('Lead', {
                 content_name: 'Form Bando Turismo',
