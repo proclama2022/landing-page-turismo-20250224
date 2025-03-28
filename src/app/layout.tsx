@@ -5,6 +5,7 @@ import ChatWindow from '@/components/ChatWindow';
 import { ModalProvider } from './ModalContext';
 import FacebookPixel from '@/components/FacebookPixel';
 import GoogleAnalytics from '@/components/GoogleAnalytics'; // Import Google Analytics component
+import { Suspense } from 'react';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -12,8 +13,14 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Bando Turismo 2024',
-  description: 'Scopri se la tua azienda è idonea al Bando Turismo 2024',
+  title: 'Bando Turismo Sicilia 2025',
+  description: 'Finanziamenti fino all\'80% a fondo perduto per strutture ricettive alberghiere ed extra-alberghiere in Sicilia. Scopri se la tua azienda è idonea al Bando Turismo 2025.',
+  keywords: 'bando turismo sicilia, finanziamenti turismo, strutture ricettive sicilia, fondo perduto turismo, bando 2025',
+  openGraph: {
+    title: 'Bando Turismo Sicilia 2025',
+    description: 'Finanziamenti fino all\'80% a fondo perduto per strutture ricettive in Sicilia',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -32,7 +39,9 @@ export default function RootLayout({
           <ChatWindow />
         </ModalProvider>
         <FacebookPixel />
-        <GoogleAnalytics /> {/* Add Google Analytics component */}
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
       </body>
     </html>
   );
