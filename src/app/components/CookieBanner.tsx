@@ -8,7 +8,12 @@ const CookieBanner: React.FC = () => {
 
   useEffect(() => {
     const consent = localStorage.getItem('cookieConsent');
-    if (consent !== 'true') {
+    const expiration = localStorage.getItem('cookieConsentExpiration');
+    const now = new Date().getTime();
+    
+    // Show banner if no consent data exists or if consent is not 'true' 
+    // and there's no expiration date or expiration date has passed
+    if (consent !== 'true' && (!expiration || now > parseInt(expiration))) {
       setShowBanner(true);
     }
   }, []);
@@ -19,7 +24,14 @@ const CookieBanner: React.FC = () => {
   };
 
   const handleDecline = () => {
+    // When user declines, store 'false' and set an expiration date 30 days from now
     localStorage.setItem('cookieConsent', 'false');
+    
+    // Calculate expiration date (30 days from now)
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+    localStorage.setItem('cookieConsentExpiration', expirationDate.getTime().toString());
+    
     setShowBanner(false);
   };
 
