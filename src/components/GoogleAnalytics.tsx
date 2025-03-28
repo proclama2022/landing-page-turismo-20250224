@@ -4,6 +4,13 @@ import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
+declare global {
+  interface Window {
+    dataLayer: any[];
+    gtag: (...args: any[]) => void;
+  }
+}
+
 const GA_TRACKING_ID = 'G-GCHXJ7JPEH'; // GA4 Measurement ID
 
 console.log('[GA Debug] GoogleAnalytics component loaded');
@@ -48,8 +55,14 @@ const GoogleAnalytics = () => {
         ? `${pathname}?${searchParams.toString()}`
         : pathname;
       
-      console.log(`[GA Debug] useEffect triggered, tracking pageview for ${url}`);
-      pageview(url);
+      // Verifica che gtag sia disponibile
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'page_view', {
+          page_location: window.location.href,
+          page_path: url,
+          send_to: GA_TRACKING_ID
+        });
+      }
     }
   }, [pathname, searchParams]);
 
@@ -59,16 +72,21 @@ const GoogleAnalytics = () => {
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
         strategy="afterInteractive"
-        onLoad={() => {
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = function gtag() {
-            window.dataLayer.push(arguments);
-          };
-          window.gtag('js', new Date());
-          window.gtag('config', GA_TRACKING_ID, {
-            page_path: window.location.pathname,
-            send_page_view: true
-          });
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}', {
+              page_location: window.location.href,
+              page_path: window.location.pathname,
+              send_page_view: true
+            });
+          `
         }}
       />
     </>
