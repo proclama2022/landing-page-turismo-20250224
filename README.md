@@ -2,21 +2,29 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Install the dependencies and start the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be available at [http://localhost:3000](http://localhost:3000).
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## Configuration
+
+Copy the example environment file to `.env` in the project root and edit the values for your environment:
+
+```bash
+cp .env.example .env
+```
+
+The application expects the following variables to be defined:
+
+- `DIFY_API_KEY` – API key used to authenticate requests to Dify.
+- `NEXT_PUBLIC_DIFY_API_URL` – Base URL of the Dify API exposed to the client.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
