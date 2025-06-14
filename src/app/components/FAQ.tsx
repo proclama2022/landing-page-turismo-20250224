@@ -2,63 +2,90 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AnimateWhenVisible from './AnimateWhenVisible';
 import Link from 'next/link';
+import AnimateWhenVisible from './AnimateWhenVisible';
 
-export default function FAQ() {
+interface FAQItem {
+  q: string;
+  a: string;
+}
+
+interface FAQCategory {
+  category: string;
+  questions: FAQItem[];
+}
+
+const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const faqs = [
+  const faqs: FAQCategory[] = [
     {
-      category: "Partecipazione",
+      category: 'Partecipazione',
       questions: [
         {
-          q: "Chi può partecipare al Bando Turismo Sicilia 2025?",
-          a: "Possono partecipare le imprese di qualsiasi dimensione con sede legale o operativa in Sicilia, operanti nel settore turistico-ricettivo con codici ATECO specifici (55.10.00, 55.20.10, 55.20.20, 55.20.30, 55.20.51, 55.30). Le imprese devono essere già costituite al momento della presentazione della domanda e dimostrare capacità di copertura finanziaria dell'investimento."
+          q: 'Chi può partecipare al bando?',
+          a: 'Possono partecipare micro, piccole e medie imprese (MPMI) e grandi imprese (GI) siciliane del settore turistico, come definite nell’Allegato 1 del Reg. UE n. 651/2014 e loro aggregazioni (consorzi, reti d\'impresa, società consortili e cooperative). Sono esclusi quali beneficiari del presente Avviso gli “alloggi glamping”, ancorché previsti dal codice ATECO 55.30.02, poiché non rientranti nella classificazione di cui alla L.R. n. 6 del 25.02.2025 e di cui al relativo decreto attuativo.',
         },
         {
-          q: "Qual è l'importo massimo finanziabile?",
-          a: "Il bando prevede due regimi di aiuto: 1) Regime 'De Minimis': investimenti da €50.000 a €300.000, con copertura fino all'80% delle spese ammissibili. 2) Regime 'Esenzione': investimenti da €300.000,01 fino a €3.500.000, con copertura del 60% per micro e piccole imprese, 50% per medie imprese e 40% per grandi imprese."
-        }
-      ]
+          q: 'Ci sono incompatibilità per chi presenta domanda?',
+          a: 'Sì, non possono partecipare le imprese che hanno già ricevuto aiuti dichiarati incompatibili dalla Commissione Europea, o che sono in stato di fallimento, liquidazione coatta, concordato preventivo (salvo continuità aziendale), o destinatarie di sanzioni interdittive. Inoltre, il titolare, ovvero i soci anche di minoranza, gli amministratori o il legale rappresentante, rispettivamente della ditta individuale o della società richiedente il contributo non devono rivestire alcune di tali cariche di socio, amministratore o legale rappresentante di altra società o titolare di altra ditta individuale che presenti analoga domanda per le agevolazioni.',
+        },
+        {
+          q: 'Quali sono i requisiti per le imprese?',
+          a: 'Le imprese devono essere regolarmente costituite e iscritte al Registro delle Imprese, avere sede operativa in Sicilia, essere in regola con gli obblighi contributivi e fiscali, e non trovarsi in situazioni di difficoltà finanziaria (secondo la definizione UE).',
+        },
+      ],
     },
     {
-      category: "Spese e Finanziamenti",
+      category: 'Spese e Finanziamenti',
       questions: [
         {
-          q: "Quali spese sono ammissibili al finanziamento?",
-          a: "Sono ammissibili: 1) Acquisto di immobili e opere edilizie (max 70% dell'investimento, di cui max 30% per suolo e immobili), 2) Macchinari, arredi e attrezzature nuove di fabbrica, 3) Programmi informatici e software (max 20% dell'investimento), 4) Consulenze specialistiche (max 2% dell'investimento), 5) Progettazione e direzione lavori (max 4% dell'investimento). Non sono ammissibili: macchinari e attrezzature usate, beni di importo inferiore a €500, spese interne."
+          q: 'Qual è l’importo del finanziamento?',
+          a: 'Il contributo è concesso per un importo minimo pari ad € 50.000,00 ed entro il limite massimo di € 3.500.000,00 per domanda di finanziamento.',
         },
         {
-          q: "Quali sono i criteri di valutazione del progetto?",
-          a: "I principali criteri sono: 1) Generazione di nuova occupazione, 2) Sostenibilità ambientale degli investimenti, 3) Localizzazione in aree rurali, isole minori o zone a bassa intensità ricettiva, 4) Percentuale di investimento in macchinari, impianti, attrezzature e arredi, 5) Recupero di immobili degradati o dismessi."
-        }
-      ]
+          q: 'Quali spese sono ammissibili?',
+          a: 'Sono ammissibili costi per investimenti materiali (terreni, immobili e impianti, macchinari e attrezzature) e immateriali (diritti di brevetto, licenze, know-how o altre forme di proprietà intellettuale) alle condizioni stabilite dall\'articolo 14 del Regolamento (UE) n. 651/2014. Le spese per programmi informatici rientrano in queste categorie. Vincoli specifici: consulenze specialistiche, studi di fattibilità, certificazioni (max 2% dell\'investimento); progettazione, direzione lavori, collaudi (max 4% dell\'investimento); acquisto suolo aziendale, fabbricati, immobili, ristrutturazioni, ecc. (max 70% dell\'investimento, con acquisto di suolo/immobili/strutture preesistenti max 30% dell\'investimento). Gli attivi devono essere nuovi e restare associati al progetto per otto anni.',
+        },
+        {
+          q: 'Come viene calcolata la percentuale di copertura?',
+          // La scheda fornita non dettaglia le percentuali di copertura in base alla dimensione dell'impresa come nel precedente bando. Si mantiene l'informazione precedente con una nota di possibile variazione o si rimuove/generalizza.
+          // Per ora, generalizziamo basandoci sul fatto che il bando è per MPMI e GI.
+          a: 'L\'intensità dell\'aiuto rispetta i limiti previsti dal regime de minimis (Regolamento (UE) 2023/2831) o dal regime di esenzione (Regolamento (UE) 651/2014, art. 14). Le specifiche percentuali di copertura possono variare.',
+        },
+      ],
     },
     {
-      category: "Tempistiche e Modalità",
+      category: 'Tempistiche e Modalità',
       questions: [
         {
-          q: "Come avviene l'erogazione del contributo?",
-          a: "L'erogazione avviene in più tranche: un anticipo iniziale previa presentazione di fideiussione, stati di avanzamento lavori intermedi e saldo finale dopo la verifica della documentazione. Tutti i pagamenti devono essere effettuati con modalità tracciabili."
+          q: 'Quando scade il bando?',
+          a: 'Le date di apertura e chiusura del bando saranno definite con la pubblicazione dell\'Avviso pubblico. Al momento non sono ancora state comunicate.',
         },
         {
-          q: "Quali sono i requisiti per partecipare?",
-          a: "I requisiti principali sono: 1) Sede legale o operativa in Sicilia, 2) Essere in regola con la normativa edilizia e urbanistica, 3) DURC regolare, 4) Rispetto dei requisiti antimafia, 5) Solidità economico-finanziaria dimostrabile anche tramite lettere di credenziali bancarie, 6) Non trovarsi in stato di difficoltà secondo la definizione UE."
-        }
-      ]
-    }
+          q: 'Come avviene la valutazione dei progetti?',
+          a: 'La valutazione avviene tramite una procedura a sportello valutativo secondo l’ordine cronologico di presentazione. I criteri includono la qualità della proposta, l’innovatività, la sostenibilità e l’impatto occupazionale. A parità di punteggio, saranno avvantaggiati coloro che faranno richiesta di finanziamento di minore importo, e successivamente le imprese giovanili (titolare o soci con età inferiore a 46 anni) o femminili (imprese a prevalente partecipazione femminile).',
+        },
+        {
+          q: 'Quali sono i tempi per la realizzazione del progetto?',
+          // La scheda fornita non indica i tempi di realizzazione. Manteniamo i tempi precedenti se sono ancora validi, altrimenti indichiamo che saranno definiti.
+          a: 'I tempi per la realizzazione del progetto saranno definiti nell\'Avviso pubblico. (Precedentemente: I progetti devono essere completati entro 18 mesi dalla data di concessione del contributo, con possibilità di proroga motivata di ulteriori 6 mesi).',
+        },
+      ],
+    },
   ];
 
-  const filteredFaqs = faqs.map(category => ({
-    ...category,
-    questions: category.questions.filter(
-      faq => 
-        faq.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        faq.a.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(category => category.questions.length > 0);
+  const filteredFaqs = faqs
+    .map(category => ({
+      ...category,
+      questions: category.questions.filter(
+        faq =>
+          faq.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          faq.a.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    }))
+    .filter(category => category.questions.length > 0);
 
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
@@ -70,7 +97,7 @@ export default function FAQ() {
             </h2>
             <div className="h-1 bg-yellow-400 mx-auto mb-6" style={{ width: '120px' }} />
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Trova le risposte alle domande più frequenti sul Bando Turismo Sicilia 2025 (DDG n. 4613/S11 del 19/12/2024)
+              Trova le risposte alle domande più frequenti sul Bando Turismo Sicilia (FSC 2021-2027)
             </p>
           </div>
         </AnimateWhenVisible>
@@ -147,7 +174,7 @@ export default function FAQ() {
                           {isOpen && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
+                              animate={{ height: 'auto', opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.3 }}
                               className="overflow-hidden"
@@ -172,7 +199,7 @@ export default function FAQ() {
           <div className="text-center mt-16">
             <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-8 rounded-2xl max-w-3xl mx-auto mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Hai altre domande sul Bando Turismo Sicilia 2025?
+                Hai altre domande sul Bando Turismo Sicilia?
               </h3>
               <p className="text-lg text-gray-700">
                 I nostri consulenti sono a tua disposizione per fornirti tutte le informazioni necessarie
@@ -206,4 +233,6 @@ export default function FAQ() {
       </div>
     </section>
   );
-} 
+};
+
+export default FAQ;
